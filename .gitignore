@@ -1,0 +1,14 @@
+**/.metadata
+**/.DS_Store
+
+**/bin
+**/target
+**/dist
+**/build
+**/gen
+**/report
+**/bin_test
+**/*.class
+**/*.ear
+.idea
+*.iml

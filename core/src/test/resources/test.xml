@@ -1,0 +1,82 @@
+<applicationServerChangeLog xmlns="http://www.eernie.nl/as/aschangelog">
+
+    <include path="subdir/test2.xml"/>
+
+    <changeSet context="core" author="string">
+        <addProperty name="addProperty" value="value" system="false"/>
+        <updateProperty name="updateProperty" value="deleteFirst" system="false"/>
+        <deleteProperty name="justDelete"/>
+
+        <addQueue name="string" jndi="string" persistent="false"/>
+        <updateQueue name="string" jndi="string" persistent="true"/>
+        <deleteQueue name="string"/>
+
+        <addDLQ deliveryQueue="string">
+            <monitorAddress>string</monitorAddress>
+        </addDLQ>
+        <deleteDLQ deliveryQueue="string">
+            <monitorAddress>string</monitorAddress>
+        </deleteDLQ>
+
+        <addDriver name="string">
+            <description>string</description>
+            <classpath>string</classpath>
+            <module>string</module>
+        </addDriver>
+        <updateDriver name="string">
+            <description>string</description>
+            <classpath>string</classpath>
+            <module>string</module>
+        </updateDriver>
+        <deleteDriver name="string"/>
+
+        <addDatasource name="string" driverName="string" JTA="true">
+            <jndi>string</jndi>
+            <connectionUrl>string</connectionUrl>
+            <username>string</username>
+            <password>string</password>
+        </addDatasource>
+        <updateDatasource name="string" driverName="string" JTA="true">
+            <jndi>string</jndi>
+            <connectionUrl>string</connectionUrl>
+            <username>string</username>
+            <password>string</password>
+        </updateDatasource>
+        <deleteDatasource name="string"/>
+
+        <addSecurityDomain name="string">
+            <securityClass>string</securityClass>
+            <customProperties>string</customProperties>
+        </addSecurityDomain>
+        <updateSecurityDomain name="string">
+            <securityClass>string</securityClass>
+            <customProperties>string</customProperties>
+        </updateSecurityDomain>
+        <deleteSecurityDomain name="string"/>
+
+        <addMailSession name="string" jndi="string">
+            <hostname>string</hostname>
+            <port>100</port>
+            <user>string</user>
+            <password>string</password>
+            <strict>true</strict>
+        </addMailSession>
+        <updateMailSession name="string" jndi="string">
+            <hostname>string</hostname>
+            <port>100</port>
+            <user>string</user>
+            <password>string</password>
+            <strict>true</strict>
+        </updateMailSession>
+        <deleteMailSession name="string"/>
+
+        <addConnectionFactory name="string">
+            <amountOfConnection>201</amountOfConnection>
+            <jdni>string</jdni>
+        </addConnectionFactory>
+        <deleteConnectionFactory name="string"/>
+
+        <changeLogLevel package="string" type="WARNING"/>
+    </changeSet>
+
+</applicationServerChangeLog>

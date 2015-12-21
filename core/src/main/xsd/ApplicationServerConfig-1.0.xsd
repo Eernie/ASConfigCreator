@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.eernie.nl/as/aschangelog" xmlns="http://www.eernie.nl/as/aschangelog" elementFormDefault="qualified">
+
+    <!-- This is the main (root) part of the xsd -->
+    <xsd:element name="applicationServerChangeLog">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="include" type="include" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element name="changeSet" type="changeSet" minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="changeSet">
+        <xsd:sequence>
+            <xsd:group ref="changeSetEntry" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="context" type="xsd:string" use="required"/>
+        <xsd:attribute name="author" type="xsd:string" use="required"/>
+        <xsd:attribute name="applicationServer" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="include">
+        <xsd:attribute name="path" type="xsd:string" use="required"/>
+        <xsd:attribute name="relativeToCurrentFile" type="xsd:boolean" default="true"/>
+    </xsd:complexType>
+
+    <xsd:group name="changeSetEntry">
+        <xsd:choice>
+            <!-- Property -->
+            <xsd:element name="addProperty" type="addProperty"/>
+            <xsd:element name="updateProperty" type="updateProperty"/>
+            <xsd:element name="deleteProperty" type="deleteProperty"/>
+            <!-- Queue -->
+            <xsd:element name="addQueue" type="addQueue"/>
+            <xsd:element name="updateQueue" type="updateQueue"/>
+            <xsd:element name="deleteQueue" type="deleteQueue"/>
+            <!-- DLQ -->
+            <xsd:element name="addDLQ" type="addDLQ"/>
+            <xsd:element name="deleteDLQ" type="deleteDLQ"/>
+            <!-- Drivers -->
+            <xsd:element name="addDriver" type="addDriver"/>
+            <xsd:element name="updateDriver" type="updateDriver"/>
+            <xsd:element name="deleteDriver" type="deleteDriver"/>
+            <!-- Datasource -->
+            <xsd:element name="addDatasource" type="addDatasource"/>
+            <xsd:element name="updateDatasource" type="updateDatasource"/>
+            <xsd:element name="deleteDatasource" type="deleteDatasource"/>
+            <!-- Security domain -->
+            <xsd:element name="addSecurityDomain" type="addSecurityDomain"/>
+            <xsd:element name="updateSecurityDomain" type="updateSecurityDomain"/>
+            <xsd:element name="deleteSecurityDomain" type="deleteSecurityDomain"/>
+            <!-- Mail session -->
+            <xsd:element name="addMailSession" type="addMailSession"/>
+            <xsd:element name="updateMailSession" type="updateMailSession"/>
+            <xsd:element name="deleteMailSession" type="deleteMailSession"/>
+            <!-- Connection factory -->
+            <xsd:element name="addConnectionFactory" type="addConnectionFactory"/>
+            <xsd:element name="deleteConnectionFactory" type="deleteConnectionFactory"/>
+            <!-- Logger -->
+            <xsd:element name="changeLogLevel" type="changeLogLevel"/>
+        </xsd:choice>
+    </xsd:group>
+
+    <xsd:complexType abstract="true" name="datasource">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:sequence>
+                    <xsd:element name="jndi" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                    <xsd:element name="connectionUrl" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                    <xsd:element name="username" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="password" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                </xsd:sequence>
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+                <xsd:attribute name="driverName" type="xsd:string" use="required"/>
+                <xsd:attribute name="JTA" type="xsd:boolean" default="true" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="addDatasource">
+        <xsd:complexContent>
+            <xsd:extension base="datasource"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="updateDatasource">
+        <xsd:complexContent>
+            <xsd:extension base="datasource"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="deleteDatasource">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType abstract="true" name="property">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+                <xsd:attribute name="value" type="xsd:string" use="required"/>
+                <xsd:attribute name="system" type="xsd:boolean" default="false"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="addProperty">
+        <xsd:complexContent>
+            <xsd:extension base="property"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="updateProperty">
+        <xsd:complexContent>
+            <xsd:extension base="property"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="deleteProperty">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="queue" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+                <xsd:attribute name="jndi" type="xsd:string" use="required"/>
+                <xsd:attribute name="persistent" type="xsd:boolean" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="addQueue">
+        <xsd:complexContent>
+            <xsd:extension base="queue"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="updateQueue">
+        <xsd:complexContent>
+            <xsd:extension base="queue"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="deleteQueue">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType abstract="true" name="driver">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:sequence>
+                    <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="classpath" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="module" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                </xsd:sequence>
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="addDriver">
+        <xsd:complexContent>
+            <xsd:extension base="driver"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="updateDriver">
+        <xsd:complexContent>
+            <xsd:extension base="driver"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="deleteDriver">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType abstract="true" name="securityDomain">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:sequence>
+                    <xsd:element name="securityClass" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                    <xsd:element name="customProperties" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                </xsd:sequence>
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="addSecurityDomain">
+        <xsd:complexContent>
+            <xsd:extension base="securityDomain"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="updateSecurityDomain">
+        <xsd:complexContent>
+            <xsd:extension base="securityDomain"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="deleteSecurityDomain">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="mailSession">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:sequence>
+                    <xsd:element name="hostname" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="port" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="user" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="password" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="strict" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+                </xsd:sequence>
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+                <xsd:attribute name="jndi" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="addMailSession">
+        <xsd:complexContent>
+            <xsd:extension base="mailSession"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="updateMailSession">
+        <xsd:complexContent>
+            <xsd:extension base="mailSession"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="deleteMailSession">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="addDLQ">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:sequence>
+                    <xsd:element name="monitorAddress" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:sequence>
+                <xsd:attribute name="deliveryQueue" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="deleteDLQ">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:sequence>
+                    <xsd:element name="monitorAddress" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                </xsd:sequence>
+                <xsd:attribute name="deliveryQueue" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="addConnectionFactory">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:sequence>
+                    <xsd:element name="amountOfConnection" type="xsd:positiveInteger" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="jdni" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:sequence>
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="deleteConnectionFactory">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="changeLogLevel">
+        <xsd:complexContent>
+            <xsd:extension base="baseEntry">
+                <xsd:attribute name="package" type="xsd:string" use="required"/>
+                <xsd:attribute name="type" type="logLevels" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="logLevels">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ALL"/>
+            <xsd:enumeration value="CONFIG"/>
+            <xsd:enumeration value="DEBUG"/>
+            <xsd:enumeration value="ERROR"/>
+            <xsd:enumeration value="FATAL"/>
+            <xsd:enumeration value="FINE"/>
+            <xsd:enumeration value="FINER"/>
+            <xsd:enumeration value="FINEST"/>
+            <xsd:enumeration value="INFO"/>
+            <xsd:enumeration value="OFF"/>
+            <xsd:enumeration value="TRACE"/>
+            <xsd:enumeration value="WARN"/>
+            <xsd:enumeration value="WARNING"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:attributeGroup name="defaultAttributes">
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:attributeGroup>
+
+    <xsd:complexType abstract="true" name="baseEntry">
+        <xsd:attribute name="applicationServer" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+</xsd:schema>
