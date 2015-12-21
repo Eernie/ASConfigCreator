@@ -9,13 +9,13 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 @Mojo(name = "generateConfig", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
@@ -24,7 +24,7 @@ public class GenerateConfigFileMojo extends AbstractMojo
 	private static final String APPLICATION_SERVERS = "applicationServers";
 	private static final String CONTEXTS = "contexts";
 
-	@Parameter(required = true, defaultValue = "${project.build.outputDirectory}/asconfig")
+	@Parameter(required = true, defaultValue = "${project.build}/asconfig")
 	private File outputDirectory;
 
 	@Parameter(required = true)
@@ -33,6 +33,9 @@ public class GenerateConfigFileMojo extends AbstractMojo
 	@Parameter(required = true, defaultValue = "${project.basedir}/src/main/asconfig/master.xml")
 	private File masterFile;
 
+	@Parameter
+	private Map<String, String> parameters;
+	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException
 	{
@@ -45,18 +48,16 @@ public class GenerateConfigFileMojo extends AbstractMojo
 		configuration.getContexts().addAll(Arrays.asList(contexts));
 		configuration.getApplicationServers().addAll(applicationServers);
 		configuration.setOutputDirectoryPath(outputDirectory);
+		if (parameters != null)
+		{
+			configuration.addProperties(parameters);
+		}
 		getLog().info("Using configuration: " + configuration);
 
 		ASConfigCreator asConfigCreator = new ASConfigCreator(configuration);
 		try
 		{
 			asConfigCreator.createConfigFiles(masterFile.getAbsolutePath());
-		}
-		catch (JAXBException e)
-		{
-			String message = "Something is wrong with the provided XML";
-			getLog().error(message, e);
-			throw new MojoExecutionException(message, e);
 		}
 		catch (IOException e)
 		{
@@ -70,13 +71,13 @@ public class GenerateConfigFileMojo extends AbstractMojo
 	{
 		if (!properties.containsKey(CONTEXTS))
 		{
-			String message="No contexts provided in settings file";
+			String message = "No contexts provided in settings file";
 			getLog().error(message);
 			throw new MojoFailureException(message);
 		}
 		if (!properties.containsKey(APPLICATION_SERVERS))
 		{
-			String message="No application servers provided in settings file";
+			String message = "No application servers provided in settings file";
 			getLog().error(message);
 			throw new MojoFailureException(message);
 		}

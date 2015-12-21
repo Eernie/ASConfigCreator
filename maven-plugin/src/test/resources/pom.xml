@@ -28,6 +28,9 @@
                     <settingsFile>/src/test/resources/settings.properties</settingsFile>
                     <masterFile>/src/test/resources/master/master.xml</masterFile>
                     <outputDirectory>target</outputDirectory>
+                    <!--<parameters>-->
+                        <!--<port>2000</port>-->
+                    <!--</parameters>-->
                 </configuration>
             </plugin>
         </plugins>

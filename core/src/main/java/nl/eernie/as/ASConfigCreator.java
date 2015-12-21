@@ -1,22 +1,25 @@
 package nl.eernie.as;
 
 import nl.eernie.as.application_server.ApplicationServer;
-import nl.eernie.as.configuration.Configuration;
-import nl.eernie.as.parsers.ConfigurationParser;
 import nl.eernie.as.aschangelog.ApplicationServerChangeLog;
 import nl.eernie.as.aschangelog.BaseEntry;
 import nl.eernie.as.aschangelog.ChangeSet;
 import nl.eernie.as.aschangelog.Include;
+import nl.eernie.as.configuration.Configuration;
+import nl.eernie.as.parsers.ConfigurationParser;
+import nl.eernie.as.variables.VariableReplacer;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.reflections.Reflections;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -33,7 +36,7 @@ public class ASConfigCreator
 		initializeConfigurationParser();
 	}
 
-	public void createConfigFiles(String changeLogFilePath) throws JAXBException, IOException
+	public void createConfigFiles(String changeLogFilePath) throws IOException
 	{
 		parseFile(changeLogFilePath);
 		for (ConfigurationParser configurationParser : configurationParsers.get(null))
@@ -42,15 +45,9 @@ public class ASConfigCreator
 		}
 	}
 
-	private void parseFile(String changeLogFilePath) throws JAXBException, FileNotFoundException
+	private void parseFile(String changeLogFilePath)
 	{
-		File file = new File(changeLogFilePath);
-
-		FileInputStream inputStream = new FileInputStream(file);
-
-		JAXBContext context = JAXBContext.newInstance(ApplicationServerChangeLog.class);
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		ApplicationServerChangeLog applicationServerChangeLog = (ApplicationServerChangeLog) unmarshaller.unmarshal(inputStream);
+		ApplicationServerChangeLog applicationServerChangeLog = createApplicationServerChangeLog(changeLogFilePath);
 		for (Include include : applicationServerChangeLog.getInclude())
 		{
 			String path;
@@ -101,6 +98,30 @@ public class ASConfigCreator
 				configurationParser.commitTransaction();
 			}
 
+		}
+	}
+
+	private ApplicationServerChangeLog createApplicationServerChangeLog(String changeLogFilePath)
+	{
+		File file = new File(changeLogFilePath);
+
+		try
+		{
+			String fileContent = FileUtils.readFileToString(file);
+			String replacedFile = VariableReplacer.replace(fileContent, configuration.getProperties());
+
+			InputStream inputStream = new ByteArrayInputStream(replacedFile.getBytes());
+			JAXBContext context = JAXBContext.newInstance(ApplicationServerChangeLog.class);
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			return (ApplicationServerChangeLog) unmarshaller.unmarshal(inputStream);
+		}
+		catch (FileNotFoundException e)
+		{
+			throw new RuntimeException("File couldn't be found", e);
+		}
+		catch (JAXBException | IOException e)
+		{
+			throw new RuntimeException("Something went wrong while unmarshalling the file " + changeLogFilePath, e);
 		}
 	}
 

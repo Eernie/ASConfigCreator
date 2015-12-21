@@ -1,6 +1,6 @@
 <applicationServerChangeLog xmlns="http://www.eernie.nl/as/aschangelog">
 
     <changeSet context="core" author="e.oldenkamp">
-        <addProperty name="firstProperty" value="ToBeSet"/>
+        <addProperty name="firstProperty" value="ToBeSet${port:8080}"/>
     </changeSet>
 </applicationServerChangeLog>
