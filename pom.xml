@@ -6,6 +6,9 @@
     <artifactId>ASConfigCreator</artifactId>
     <packaging>pom</packaging>
     <version>0.2.0-SNAPSHOT</version>
+    <name>ASConfigCreator</name>
+    <description>Create configs for you application server</description>
+    <url>https://github.com/Eernie/ASConfigCreator</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
