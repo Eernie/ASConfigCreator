@@ -1,0 +1,5 @@
+language: java
+sudo: false
+
+after_success:
+  - mvn clean test cobertura:cobertura coveralls:report
