@@ -189,6 +189,13 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+            </plugin>
+        </plugins>
     </build>
 
     <distributionManagement>
@@ -206,8 +213,8 @@
         <connection>scm:git:git@github.com:Eernie/ASConfigCreator.git</connection>
         <url>scm:git:git@github.com:Eernie/ASConfigCreator.git</url>
         <developerConnection>scm:git:git@github.com:Eernie/ASConfigCreator.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <licenses>
         <license>
