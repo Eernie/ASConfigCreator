@@ -185,6 +185,11 @@
                     <configuration>
                         <format>xml</format>
                         <maxmem>256m</maxmem>
+                        <instrumentation>
+                            <excludes>
+                                <exclude>nl.eernie.as.aschangelog.*</exclude>
+                            </excludes>
+                        </instrumentation>
                     </configuration>
                 </plugin>
             </plugins>
