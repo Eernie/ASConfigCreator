@@ -179,7 +179,7 @@
                     </executions>
                     <configuration>
                         <excludes>
-                            <exclude>nl.eernie.as.aschangelog.*</exclude>
+                            <exclude>**/nl/eernie/as/aschangelog/**.class</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
@@ -192,7 +192,7 @@
                         <maxmem>256m</maxmem>
                         <instrumentation>
                             <excludes>
-                                <exclude>nl.eernie.as.aschangelog.*</exclude>
+                                <exclude>**/nl/eernie/as/aschangelog/**.class</exclude>
                             </excludes>
                         </instrumentation>
                     </configuration>
