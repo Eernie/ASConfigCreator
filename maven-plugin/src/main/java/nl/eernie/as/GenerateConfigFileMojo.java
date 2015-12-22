@@ -24,7 +24,7 @@ public class GenerateConfigFileMojo extends AbstractMojo
 	private static final String APPLICATION_SERVERS = "applicationServers";
 	private static final String CONTEXTS = "contexts";
 
-	@Parameter(required = true, defaultValue = "${project.build}/asconfig")
+	@Parameter(required = true, defaultValue = "${project.build.directory}/asconfig")
 	private File outputDirectory;
 
 	@Parameter(required = true)
