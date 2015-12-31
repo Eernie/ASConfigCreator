@@ -5,9 +5,12 @@ import nl.eernie.as.aschangelog.ApplicationServerChangeLog;
 import nl.eernie.as.aschangelog.BaseEntry;
 import nl.eernie.as.aschangelog.ChangeSet;
 import nl.eernie.as.aschangelog.Include;
+import nl.eernie.as.aschangelog.Tag;
 import nl.eernie.as.configuration.Configuration;
 import nl.eernie.as.parsers.ConfigurationParser;
 import nl.eernie.as.variables.VariableReplacer;
+
+import com.sun.deploy.util.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.reflections.Reflections;
@@ -15,11 +18,13 @@ import org.reflections.Reflections;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -29,6 +34,8 @@ public class ASConfigCreator
 {
 	private Configuration configuration;
 	private Map<ApplicationServer, Set<ConfigurationParser>> configurationParsers = new HashMap<>();
+	private boolean fromTagFound;
+	private boolean endTagFound = false;
 
 	public ASConfigCreator(Configuration configuration)
 	{
@@ -38,6 +45,8 @@ public class ASConfigCreator
 
 	public void createConfigFiles(String changeLogFilePath) throws IOException
 	{
+		fromTagFound = configuration.getFromTag() == null;
+		endTagFound = false;
 		parseFile(changeLogFilePath);
 		for (ConfigurationParser configurationParser : configurationParsers.get(null))
 		{
@@ -62,42 +71,73 @@ public class ASConfigCreator
 			}
 			parseFile(path);
 		}
-		for (ChangeSet changeSet : applicationServerChangeLog.getChangeSet())
+
+		for (Serializable entry : applicationServerChangeLog.getChangeLogEntry())
 		{
-			if (!configurationHasContext(changeSet.getContext()))
+			if (entry instanceof Tag)
 			{
-				continue;
+				processTag((Tag) entry);
 			}
+			else if (entry instanceof ChangeSet)
+			{
+				processChangeSet((ChangeSet) entry);
+			}
+		}
+	}
 
-			ApplicationServer applicationServer = null;
-			if (changeSet.getApplicationServer() != null)
+	private void processTag(Tag tag)
+	{
+		if (tag.getVersion().equals(configuration.getFromTag()))
+		{
+			fromTagFound = true;
+		}
+		if (tag.getVersion().equals(configuration.getToTag()))
+		{
+			endTagFound = true;
+		}
+	}
+
+	private void processChangeSet(ChangeSet changeSet)
+	{
+		if (!fromTagFound || endTagFound)
+		{
+			return;
+		}
+		else if (!configurationHasContext(changeSet.getContext()))
+		{
+			return;
+		}
+
+		ApplicationServer applicationServer = null;
+		if (changeSet.getApplicationServer() != null)
+		{
+			applicationServer = getApplicationServer(changeSet.getApplicationServer());
+			if (applicationServer == null)
 			{
-				applicationServer = getApplicationServer(changeSet.getApplicationServer());
-				if (applicationServer == null)
-				{
-					continue;
-				}
+				return;
 			}
-			Set<ConfigurationParser> configurationParsers = this.configurationParsers.get(applicationServer);
+		}
+
+		Set<ConfigurationParser> configurationParsers = this.configurationParsers.get(applicationServer);
+		for (ConfigurationParser configurationParser : configurationParsers)
+		{
+			configurationParser.beginTransaction();
+		}
+
+		for (BaseEntry baseEntry : changeSet.getChangeSetEntry())
+		{
 			for (ConfigurationParser configurationParser : configurationParsers)
 			{
-				configurationParser.beginTransaction();
-			}
-			for (BaseEntry baseEntry : changeSet.getChangeSetEntry())
-			{
-				for (ConfigurationParser configurationParser : configurationParsers)
+				if (configurationParser.canHandleChangeLogEntry(baseEntry))
 				{
-					if (configurationParser.canHandleChangeLogEntry(baseEntry))
-					{
-						configurationParser.handle(baseEntry);
-					}
+					configurationParser.handle(baseEntry);
 				}
 			}
-			for (ConfigurationParser configurationParser : configurationParsers)
-			{
-				configurationParser.commitTransaction();
-			}
+		}
 
+		for (ConfigurationParser configurationParser : configurationParsers)
+		{
+			configurationParser.commitTransaction();
 		}
 	}
 

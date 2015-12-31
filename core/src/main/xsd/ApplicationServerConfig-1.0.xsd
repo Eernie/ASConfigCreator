@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            targetNamespace="http://www.eernie.nl/as/aschangelog" xmlns="http://www.eernie.nl/as/aschangelog" elementFormDefault="qualified">
+            targetNamespace="http://www.eernie.nl/as/aschangelog"
+            xmlns="http://www.eernie.nl/as/aschangelog"
+            elementFormDefault="qualified">
 
     <!-- This is the main (root) part of the xsd -->
     <xsd:element name="applicationServerChangeLog">
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element name="include" type="include" minOccurs="0" maxOccurs="unbounded"/>
-                <xsd:element name="changeSet" type="changeSet" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:group ref="changeLogEntry" minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+
+    <xsd:group name="changeLogEntry">
+        <xsd:choice>
+            <xsd:element name="changeSet" type="changeSet"/>
+            <xsd:element name="tag" type="tag"/>
+        </xsd:choice>
+    </xsd:group>
 
     <xsd:complexType name="changeSet">
         <xsd:sequence>
@@ -317,4 +326,8 @@
         <xsd:attribute name="applicationServer" type="xsd:string" use="optional"/>
     </xsd:complexType>
 
+    <xsd:complexType name="tag">
+        <xsd:attribute name="version" type="xsd:string" use="required"/>
+        <xsd:attribute name="author" type="xsd:string" use="required"/>
+    </xsd:complexType>
 </xsd:schema>
