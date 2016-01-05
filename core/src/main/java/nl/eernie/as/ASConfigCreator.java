@@ -1,24 +1,5 @@
 package nl.eernie.as;
 
-import nl.eernie.as.application_server.ApplicationServer;
-import nl.eernie.as.aschangelog.ApplicationServerChangeLog;
-import nl.eernie.as.aschangelog.BaseEntry;
-import nl.eernie.as.aschangelog.ChangeSet;
-import nl.eernie.as.aschangelog.Include;
-import nl.eernie.as.aschangelog.Tag;
-import nl.eernie.as.configuration.Configuration;
-import nl.eernie.as.parsers.ConfigurationParser;
-import nl.eernie.as.variables.VariableReplacer;
-
-import com.sun.deploy.util.StringUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.reflections.Reflections;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,6 +10,24 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import nl.eernie.as.application_server.ApplicationServer;
+import nl.eernie.as.aschangelog.ApplicationServerChangeLog;
+import nl.eernie.as.aschangelog.BaseEntry;
+import nl.eernie.as.aschangelog.ChangeSet;
+import nl.eernie.as.aschangelog.Include;
+import nl.eernie.as.aschangelog.Tag;
+import nl.eernie.as.configuration.Configuration;
+import nl.eernie.as.parsers.ConfigurationParser;
+import nl.eernie.as.variables.VariableReplacer;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.reflections.Reflections;
 
 public class ASConfigCreator
 {
