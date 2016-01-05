@@ -1,0 +1,3 @@
+<applicationServerChangeLog xmlns="http://www.eernie.nl/as/aschangelog">
+	<include path="include.xml" relativeToCurrentFile="true"/>
+</applicationServerChangeLog>
