@@ -59,7 +59,7 @@ public class DefaultJbossParser implements ConfigurationParser
 	@Override
 	public void beginTransaction()
 	{
-		stringBuilder.append("batch \n");
+		stringBuilder.append("batch\n");
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public class DefaultJbossParser implements ConfigurationParser
 	@Override
 	public void commitTransaction()
 	{
-		stringBuilder.append("run-batch \n\n");
+		stringBuilder.append("run-batch\n\n");
 	}
 
 	@Override

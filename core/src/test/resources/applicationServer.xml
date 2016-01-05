@@ -1,0 +1,14 @@
+<applicationServerChangeLog xmlns="http://www.eernie.nl/as/aschangelog">
+
+	<changeSet context="core" applicationServer="was" author="e.oldenkamp">
+		<addProperty name="property that will not be processed" value="value"/>
+	</changeSet>
+
+	<changeSet context="core" applicationServer="wildfly" author="e.oldenkamp">
+		<addProperty name="property that will be processed" value="value"/>
+	</changeSet>
+
+	<changeSet context="core" author="e.oldenkamp">
+		<addProperty name="property that will be processed" value="value"/>
+	</changeSet>
+</applicationServerChangeLog>

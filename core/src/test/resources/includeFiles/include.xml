@@ -1,0 +1,6 @@
+<applicationServerChangeLog xmlns="http://www.eernie.nl/as/aschangelog">
+
+	<changeSet context="core" author="e.oldenkamp">
+		<addProperty name="property" value="property"/>
+	</changeSet>
+</applicationServerChangeLog>

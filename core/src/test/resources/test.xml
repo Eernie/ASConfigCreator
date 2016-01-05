@@ -2,6 +2,8 @@
 
     <include path="subdir/test2.xml"/>
 
+	<tag version="1.0.0" author="e.oldenkamp"/>
+
     <changeSet context="core" author="string">
         <addProperty name="addProperty" value="value" system="false"/>
         <updateProperty name="updateProperty" value="deleteFirst" system="false"/>
