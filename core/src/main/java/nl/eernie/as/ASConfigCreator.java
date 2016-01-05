@@ -184,7 +184,7 @@ public class ASConfigCreator
 	{
 		for (ApplicationServer server : configuration.getApplicationServers())
 		{
-			if (!server.equalsFromString(applicationServer))
+			if (server.equalsFromString(applicationServer))
 			{
 				return server;
 			}

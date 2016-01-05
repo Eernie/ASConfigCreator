@@ -75,7 +75,27 @@ public class ASConfigCreatorTest
 
 		String outputFile = outputDirectory.toString() + "/jboss.cli";
 
-		List<String> expected = Arrays.asList("batch", "/system-property=property that will bee processed:add(value=value)", "run-batch", "");
+		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "");
+		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void testApplicationServer() throws IOException
+	{
+		Path outputDirectory = Files.createTempDirectory("asConfig");
+
+		Configuration configuration = new Configuration();
+		configuration.getApplicationServers().add(ApplicationServer.WILDFLY);
+		configuration.getContexts().add("core");
+		configuration.setOutputDirectoryPath(outputDirectory.toFile());
+		ASConfigCreator creator = new ASConfigCreator(configuration);
+
+		creator.createConfigFiles(getClass().getResource("/applicationServer.xml").getPath());
+
+		String outputFile = outputDirectory.toString() + "/jboss.cli";
+
+		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "", "batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "");
 		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
 		assertEquals(expected, actual);
 	}
