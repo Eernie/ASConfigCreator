@@ -1,12 +1,12 @@
 package nl.eernie.as.variables;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 public class VariableReplacerTest
 {
@@ -32,7 +32,5 @@ public class VariableReplacerTest
 		properties.put("prop", "val");
 		replace = VariableReplacer.replace("a ${default:var} should use the default ${prop:value} if the property is not found", properties);
 		assertEquals("a var should use the default val if the property is not found", replace);
-
-
 	}
 }
