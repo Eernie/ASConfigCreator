@@ -1,5 +1,11 @@
 package nl.eernie.as.parsers;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.AddConnectionFactory;
 import nl.eernie.as.aschangelog.AddDLQ;
@@ -31,13 +37,8 @@ import nl.eernie.as.aschangelog.UpdateMailSession;
 import nl.eernie.as.aschangelog.UpdateProperty;
 import nl.eernie.as.aschangelog.UpdateQueue;
 import nl.eernie.as.aschangelog.UpdateSecurityDomain;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import org.apache.commons.io.FileUtils;
 
 public class DefaultJbossParser implements ConfigurationParser
 {
@@ -337,6 +338,7 @@ public class DefaultJbossParser implements ConfigurationParser
 	{
 		stringBuilder.append("/subsystem=security/security-domain=").append(entry);
 		stringBuilder.append(":remove");
+		stringBuilder.append('\n');
 	}
 
 	private void handleEntry(AddMailSession entry)
@@ -372,7 +374,7 @@ public class DefaultJbossParser implements ConfigurationParser
 	private void handleEntry(AddConnectionFactory entry)
 	{
 		stringBuilder.append("/subsystem=messaging/hornetq-server=default/connection-factory=").append(entry.getName());
-		stringBuilder.append(":add(connector={\"in-vm\"=>undefined}, entries= [").append(entry.getJdni()).append("])");
+		stringBuilder.append(":add(connector={\"in-vm\"=>undefined}, entries=").append(entry.getJdni()).append(")");
 		stringBuilder.append('\n');
 	}
 
