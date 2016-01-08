@@ -326,7 +326,7 @@ public class DefaultJbossParserTest
 		AddConnectionFactory baseEntry = new AddConnectionFactory();
 		baseEntry.setName("CF");
 		baseEntry.setAmountOfConnection(BigInteger.TEN);
-		baseEntry.getJdni().add("jndi");
+		baseEntry.getJndi().add("jndi");
 		parser.handle(baseEntry);
 		List<String> expected = Collections.singletonList("/subsystem=messaging/hornetq-server=default/connection-factory=CF:add(connector={\"in-vm\"=>undefined}, entries=[jndi])");
 		verifyOutput(parser, expected);

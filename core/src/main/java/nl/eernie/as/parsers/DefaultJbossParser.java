@@ -374,7 +374,7 @@ public class DefaultJbossParser implements ConfigurationParser
 	private void handleEntry(AddConnectionFactory entry)
 	{
 		stringBuilder.append("/subsystem=messaging/hornetq-server=default/connection-factory=").append(entry.getName());
-		stringBuilder.append(":add(connector={\"in-vm\"=>undefined}, entries=").append(entry.getJdni()).append(")");
+		stringBuilder.append(":add(connector={\"in-vm\"=>undefined}, entries=").append(entry.getJndi()).append(")");
 		stringBuilder.append('\n');
 	}
 

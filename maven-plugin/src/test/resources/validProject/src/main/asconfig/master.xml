@@ -72,7 +72,7 @@
 
         <addConnectionFactory name="string">
             <amountOfConnection>201</amountOfConnection>
-            <jdni>string</jdni>
+            <jndi>string</jndi>
         </addConnectionFactory>
         <deleteConnectionFactory name="string"/>
 

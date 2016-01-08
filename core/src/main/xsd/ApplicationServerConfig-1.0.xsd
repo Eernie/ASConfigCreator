@@ -277,7 +277,7 @@
             <xsd:extension base="baseEntry">
                 <xsd:sequence>
                     <xsd:element name="amountOfConnection" type="xsd:positiveInteger" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element name="jdni" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                    <xsd:element name="jndi" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
                 </xsd:sequence>
                 <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:extension>
