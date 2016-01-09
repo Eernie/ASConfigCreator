@@ -39,6 +39,7 @@ import nl.eernie.as.aschangelog.UpdateQueue;
 import nl.eernie.as.aschangelog.UpdateSecurityDomain;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class DefaultJbossParser implements ConfigurationParser
 {
@@ -374,8 +375,10 @@ public class DefaultJbossParser implements ConfigurationParser
 	private void handleEntry(AddConnectionFactory entry)
 	{
 		stringBuilder.append("/subsystem=messaging/hornetq-server=default/connection-factory=").append(entry.getName());
-		stringBuilder.append(":add(connector={\"in-vm\"=>undefined}, entries=").append(entry.getJndi()).append(")");
+		String joined = StringUtils.join(entry.getJndi().iterator(), "\",\"");
+		stringBuilder.append(":add(connector={\"in-vm\"=>undefined}, entries=[\"").append(joined).append("\"])");
 		stringBuilder.append('\n');
+
 	}
 
 	private void handleEntry(DeleteConnectionFactory entry)

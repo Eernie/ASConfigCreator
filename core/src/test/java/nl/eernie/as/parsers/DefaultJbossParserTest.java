@@ -327,8 +327,9 @@ public class DefaultJbossParserTest
 		baseEntry.setName("CF");
 		baseEntry.setAmountOfConnection(BigInteger.TEN);
 		baseEntry.getJndi().add("jndi");
+		baseEntry.getJndi().add("second");
 		parser.handle(baseEntry);
-		List<String> expected = Collections.singletonList("/subsystem=messaging/hornetq-server=default/connection-factory=CF:add(connector={\"in-vm\"=>undefined}, entries=[jndi])");
+		List<String> expected = Collections.singletonList("/subsystem=messaging/hornetq-server=default/connection-factory=CF:add(connector={\"in-vm\"=>undefined}, entries=[\"jndi\",\"second\"])");
 		verifyOutput(parser, expected);
 	}
 
