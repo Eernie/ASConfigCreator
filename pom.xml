@@ -211,6 +211,7 @@
                         <instrumentation>
                             <excludes>
                                 <exclude>**/nl/eernie/as/aschangelog/**.class</exclude>
+								<exclude>**/nl/eernie/as/HelpMojo.class</exclude>
                             </excludes>
                         </instrumentation>
                     </configuration>
