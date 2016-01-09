@@ -26,7 +26,7 @@ asConfigCreator.createConfigFiles(masterFile.getAbsolutePath());
 ```
 
 ###Maven plugin
-For the maven plugin you can use the following snippit:
+For the maven plugin you can use the following snippet:
 ```xml
 <plugin>
 	<groupId>nl.eernie.as</groupId>
