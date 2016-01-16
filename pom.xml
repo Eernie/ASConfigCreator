@@ -5,7 +5,7 @@
     <groupId>nl.eernie.as</groupId>
     <artifactId>ASConfigCreator</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.0</version>
+    <version>0.3.0-SNAPSHOT</version>
     <name>ASConfigCreator</name>
     <description>Create configs for you application server</description>
     <url>https://github.com/Eernie/ASConfigCreator</url>
@@ -242,7 +242,7 @@
         <connection>scm:git:git@github.com:Eernie/ASConfigCreator.git</connection>
         <url>scm:git:git@github.com:Eernie/ASConfigCreator.git</url>
         <developerConnection>scm:git:git@github.com:Eernie/ASConfigCreator.git</developerConnection>
-        <tag>ASConfigCreator-0.2.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <licenses>
