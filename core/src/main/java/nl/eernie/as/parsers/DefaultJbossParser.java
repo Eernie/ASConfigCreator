@@ -44,7 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DefaultJbossParser implements ConfigurationParser
 {
 	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class));
-	private StringBuilder stringBuilder = new StringBuilder();
+	protected StringBuilder stringBuilder = new StringBuilder();
 
 	@Override
 	public boolean canHandleChangeLogEntry(BaseEntry entry)
@@ -55,7 +55,7 @@ public class DefaultJbossParser implements ConfigurationParser
 	@Override
 	public boolean canHandleApplicationServer(ApplicationServer applicationServer)
 	{
-		return applicationServer == ApplicationServer.JBOSS || applicationServer == ApplicationServer.WILDFLY;
+		return applicationServer == ApplicationServer.JBOSS;
 	}
 
 	@Override
@@ -174,7 +174,7 @@ public class DefaultJbossParser implements ConfigurationParser
 		FileUtils.write(file, stringBuilder);
 	}
 
-	private void addProperty(Property entry)
+	protected void addProperty(Property entry)
 	{
 		stringBuilder.append("/system-property=");
 		stringBuilder.append(entry.getName());
@@ -183,43 +183,43 @@ public class DefaultJbossParser implements ConfigurationParser
 		stringBuilder.append(")\n");
 	}
 
-	private void updateProperty(Property entry)
+	protected void updateProperty(Property entry)
 	{
 		deleteProperty(entry.getName());
 		addProperty(entry);
 	}
 
-	private void deleteProperty(String name)
+	protected void deleteProperty(String name)
 	{
 		stringBuilder.append("/system-property=");
 		stringBuilder.append(name);
 		stringBuilder.append(":remove\n");
 	}
 
-	private void handleEntry(DeleteQueue entry)
+	protected void handleEntry(DeleteQueue entry)
 	{
 		removeQueue(entry.getName());
 	}
 
-	private void handleEntry(AddQueue entry)
+	protected void handleEntry(AddQueue entry)
 	{
 		createQueue(entry);
 	}
 
-	private void handleEntry(UpdateQueue entry)
+	protected void handleEntry(UpdateQueue entry)
 	{
 		removeQueue(entry.getName());
 		createQueue(entry);
 	}
 
-	private void removeQueue(String name)
+	protected void removeQueue(String name)
 	{
 		stringBuilder.append("jms-queue remove");
 		stringBuilder.append(" --queue-address=").append(name);
 		stringBuilder.append('\n');
 	}
 
-	private void createQueue(Queue entry)
+	protected void createQueue(Queue entry)
 	{
 		stringBuilder.append("jms-queue add");
 		stringBuilder.append(" --queue-address=").append(entry.getName());
@@ -228,7 +228,7 @@ public class DefaultJbossParser implements ConfigurationParser
 		stringBuilder.append('\n');
 	}
 
-	private void handleEntry(AddDLQ entry)
+	protected void handleEntry(AddDLQ entry)
 	{
 		for (String matchingJndi : entry.getMonitorAddress())
 		{
@@ -238,29 +238,29 @@ public class DefaultJbossParser implements ConfigurationParser
 		}
 	}
 
-	private void handleEntry(DeleteDLQ entry)
+	protected void handleEntry(DeleteDLQ entry)
 	{
 		stringBuilder.append("/subsystem=messaging/hornetq-server=default/address-setting=").append(entry.getMonitorAddress());
 		stringBuilder.append(":remove\n");
 	}
 
-	private void handleEntry(AddDriver entry)
+	protected void handleEntry(AddDriver entry)
 	{
 		addDriver(entry);
 	}
 
-	private void handleEntry(UpdateDriver entry)
+	protected void handleEntry(UpdateDriver entry)
 	{
 		deleteDriver(entry.getName());
 		addDriver(entry);
 	}
 
-	private void handleEntry(DeleteDriver entry)
+	protected void handleEntry(DeleteDriver entry)
 	{
 		deleteDriver(entry.getName());
 	}
 
-	private void addDriver(Driver entry)
+	protected void addDriver(Driver entry)
 	{
 		stringBuilder.append("/subsystem=datasources/jdbc-driver=").append(entry.getName());
 		stringBuilder.append(":add(driver-name=").append(entry.getName());
@@ -268,28 +268,34 @@ public class DefaultJbossParser implements ConfigurationParser
 		stringBuilder.append('\n');
 	}
 
-	private void deleteDriver(String entry)
+	protected void deleteDriver(String entry)
 	{
 		stringBuilder.append("/subsystem=datasources/jdbc-driver=").append(entry).append(":remove\n");
 	}
 
-	private void handleEntry(AddDatasource entry)
+	protected void handleEntry(AddDatasource entry)
 	{
+		commitTransaction();
 		addDatasource(entry);
+		beginTransaction();
 	}
 
-	private void handleEntry(UpdateDatasource entry)
+	protected void handleEntry(UpdateDatasource entry)
 	{
+		commitTransaction();
 		deleteDatasource(entry.getName());
 		addDatasource(entry);
+		beginTransaction();
 	}
 
-	private void handleEntry(DeleteDatasource entry)
+	protected void handleEntry(DeleteDatasource entry)
 	{
+		commitTransaction();
 		deleteDatasource(entry.getName());
+		beginTransaction();
 	}
 
-	private void addDatasource(Datasource entry)
+	protected void addDatasource(Datasource entry)
 	{
 		stringBuilder.append("data-source add --name=").append(entry.getName());
 		stringBuilder.append(" --driver-name=").append(entry.getDriverName());
@@ -298,32 +304,31 @@ public class DefaultJbossParser implements ConfigurationParser
 		stringBuilder.append(" --user-name=").append(entry.getUsername());
 		stringBuilder.append(" --password=").append(entry.getPassword());
 		stringBuilder.append(" --jta=").append(entry.isJTA());
-		stringBuilder.append(" --enabled=").append(true);
 		stringBuilder.append('\n');
 	}
 
-	private void deleteDatasource(String name)
+	protected void deleteDatasource(String name)
 	{
 		stringBuilder.append("data-source remove --name=").append(name).append('\n');
 	}
 
-	private void handleEntry(AddSecurityDomain entry)
+	protected void handleEntry(AddSecurityDomain entry)
 	{
 		addSecurityDomain(entry);
 	}
 
-	private void handleEntry(UpdateSecurityDomain entry)
+	protected void handleEntry(UpdateSecurityDomain entry)
 	{
 		deleteSecurityDomain(entry.getName());
 		addSecurityDomain(entry);
 	}
 
-	private void handleEntry(DeleteSecurityDomain entry)
+	protected void handleEntry(DeleteSecurityDomain entry)
 	{
 		deleteSecurityDomain(entry.getName());
 	}
 
-	private void addSecurityDomain(SecurityDomain entry)
+	protected void addSecurityDomain(SecurityDomain entry)
 	{
 		stringBuilder.append("/subsystem=security/security-domain=").append(entry.getName());
 		stringBuilder.append(":add");
@@ -335,44 +340,44 @@ public class DefaultJbossParser implements ConfigurationParser
 		stringBuilder.append('\n');
 	}
 
-	private void deleteSecurityDomain(String entry)
+	protected void deleteSecurityDomain(String entry)
 	{
 		stringBuilder.append("/subsystem=security/security-domain=").append(entry);
 		stringBuilder.append(":remove");
 		stringBuilder.append('\n');
 	}
 
-	private void handleEntry(AddMailSession entry)
+	protected void handleEntry(AddMailSession entry)
 	{
 		addMailSession(entry);
 	}
 
-	private void handleEntry(UpdateMailSession entry)
+	protected void handleEntry(UpdateMailSession entry)
 	{
 		deleteMailSession(entry.getName());
 		addMailSession(entry);
 	}
 
-	private void handleEntry(DeleteMailSession entry)
+	protected void handleEntry(DeleteMailSession entry)
 	{
 		deleteMailSession(entry.getName());
 	}
 
-	private void addMailSession(MailSession entry)
+	protected void addMailSession(MailSession entry)
 	{
 		stringBuilder.append("/subsystem=mail/mail-session=").append(entry.getName());
 		stringBuilder.append(":add(jndi-name=").append(entry.getJndi()).append(')');
 		stringBuilder.append('\n');
 	}
 
-	private void deleteMailSession(String entry)
+	protected void deleteMailSession(String entry)
 	{
 		stringBuilder.append("/subsystem=mail/mail-session=").append(entry);
 		stringBuilder.append(":remove");
 		stringBuilder.append('\n');
 	}
 
-	private void handleEntry(AddConnectionFactory entry)
+	protected void handleEntry(AddConnectionFactory entry)
 	{
 		stringBuilder.append("/subsystem=messaging/hornetq-server=default/connection-factory=").append(entry.getName());
 		String joined = StringUtils.join(entry.getJndi().iterator(), "\",\"");
@@ -381,14 +386,14 @@ public class DefaultJbossParser implements ConfigurationParser
 
 	}
 
-	private void handleEntry(DeleteConnectionFactory entry)
+	protected void handleEntry(DeleteConnectionFactory entry)
 	{
 		stringBuilder.append("/subsystem=messaging/hornetq-server=default/connection-factory=").append(entry.getName());
 		stringBuilder.append(":remove");
 		stringBuilder.append('\n');
 	}
 
-	private void handleEntry(ChangeLogLevel entry)
+	protected void handleEntry(ChangeLogLevel entry)
 	{
 		stringBuilder.append("/subsystem=logging/logger=").append(entry.getPackage());
 		stringBuilder.append(":add(level=").append(entry.getType().value()).append(")\n");

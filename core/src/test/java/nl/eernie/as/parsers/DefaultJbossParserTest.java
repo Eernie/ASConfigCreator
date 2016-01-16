@@ -49,7 +49,7 @@ public class DefaultJbossParserTest
 	{
 		DefaultJbossParser parser = new DefaultJbossParser();
 		assertTrue(parser.canHandleApplicationServer(ApplicationServer.JBOSS));
-		assertTrue(parser.canHandleApplicationServer(ApplicationServer.WILDFLY));
+		assertFalse(parser.canHandleApplicationServer(ApplicationServer.WILDFLY));
 		assertFalse(parser.canHandleApplicationServer(ApplicationServer.WEBSPHERE));
 	}
 
@@ -217,7 +217,7 @@ public class DefaultJbossParserTest
 		baseEntry.setPassword("pass");
 		baseEntry.setUsername("user");
 		parser.handle(baseEntry);
-		List<String> expected = Collections.singletonList("data-source add --name=DS --driver-name=driver --jndi-name=java:/ds --connection-url=url --user-name=user --password=pass --jta=true --enabled=true");
+		List<String> expected = Arrays.asList("run-batch", "", "data-source add --name=DS --driver-name=driver --jndi-name=java:/ds --connection-url=url --user-name=user --password=pass --jta=true", "batch");
 		verifyOutput(parser, expected);
 	}
 
@@ -234,7 +234,7 @@ public class DefaultJbossParserTest
 		baseEntry.setPassword("pass");
 		baseEntry.setUsername("user");
 		parser.handle(baseEntry);
-		List<String> expected = Arrays.asList("data-source remove --name=DS", "data-source add --name=DS --driver-name=driver --jndi-name=java:/ds --connection-url=url --user-name=user --password=pass --jta=true --enabled=true");
+		List<String> expected = Arrays.asList("run-batch", "", "data-source remove --name=DS", "data-source add --name=DS --driver-name=driver --jndi-name=java:/ds --connection-url=url --user-name=user --password=pass --jta=true", "batch");
 		verifyOutput(parser, expected);
 	}
 
@@ -245,7 +245,7 @@ public class DefaultJbossParserTest
 		DeleteDatasource baseEntry = new DeleteDatasource();
 		baseEntry.setName("DS");
 		parser.handle(baseEntry);
-		List<String> expected = Collections.singletonList("data-source remove --name=DS");
+		List<String> expected = Arrays.asList("run-batch", "", "data-source remove --name=DS", "batch");
 		verifyOutput(parser, expected);
 	}
 
