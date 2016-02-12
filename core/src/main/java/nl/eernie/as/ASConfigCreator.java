@@ -11,9 +11,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.ApplicationServerChangeLog;
@@ -28,9 +31,12 @@ import nl.eernie.as.variables.VariableReplacer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.reflections.Reflections;
+import org.xml.sax.SAXException;
 
 public class ASConfigCreator
 {
+	private static final String APPLICATION_SERVER_CONFIG_XSD = "ApplicationServerConfig-1.0.xsd";
+
 	private Configuration configuration;
 	private Map<ApplicationServer, Set<ConfigurationParser>> configurationParsers = new HashMap<>();
 	private boolean fromTagFound;
@@ -149,9 +155,13 @@ public class ASConfigCreator
 			String fileContent = FileUtils.readFileToString(file);
 			String replacedFile = VariableReplacer.replace(fileContent, configuration.getProperties());
 
+			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			Schema schema = sf.newSchema(ASConfigCreator.class.getResource("/" + APPLICATION_SERVER_CONFIG_XSD));
+
 			InputStream inputStream = new ByteArrayInputStream(replacedFile.getBytes());
 			JAXBContext context = JAXBContext.newInstance(ApplicationServerChangeLog.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
+			unmarshaller.setSchema(schema);
 			return (ApplicationServerChangeLog) unmarshaller.unmarshal(inputStream);
 		}
 		catch (FileNotFoundException e)
@@ -161,6 +171,10 @@ public class ASConfigCreator
 		catch (JAXBException | IOException e)
 		{
 			throw new RuntimeException("Something went wrong while unmarshalling the file " + changeLogFilePath, e);
+		}
+		catch (SAXException e)
+		{
+			throw new RuntimeException("Something went wrong while parsing file " + changeLogFilePath, e);
 		}
 	}
 
