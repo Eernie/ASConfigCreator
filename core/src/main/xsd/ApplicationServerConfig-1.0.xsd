@@ -69,6 +69,7 @@
             <xsd:element name="deleteConnectionFactory" type="deleteConnectionFactory"/>
             <!-- Logger -->
             <xsd:element name="changeLogLevel" type="changeLogLevel"/>
+			<xsd:element name="custom" type="customChange"/>
         </xsd:choice>
     </xsd:group>
 
@@ -317,6 +318,16 @@
             <xsd:enumeration value="WARNING"/>
         </xsd:restriction>
     </xsd:simpleType>
+
+	<xsd:complexType name="customChange">
+		<xsd:complexContent>
+			<xsd:extension base="baseEntry">
+				<xsd:all minOccurs="1" maxOccurs="1">
+					<xsd:element name="change" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+				</xsd:all>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
 
     <xsd:attributeGroup name="defaultAttributes">
         <xsd:attribute name="name" type="xsd:string" use="required"/>

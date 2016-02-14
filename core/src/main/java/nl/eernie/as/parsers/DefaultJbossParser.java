@@ -17,6 +17,7 @@ import nl.eernie.as.aschangelog.AddQueue;
 import nl.eernie.as.aschangelog.AddSecurityDomain;
 import nl.eernie.as.aschangelog.BaseEntry;
 import nl.eernie.as.aschangelog.ChangeLogLevel;
+import nl.eernie.as.aschangelog.CustomChange;
 import nl.eernie.as.aschangelog.Datasource;
 import nl.eernie.as.aschangelog.DeleteConnectionFactory;
 import nl.eernie.as.aschangelog.DeleteDLQ;
@@ -43,7 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class DefaultJbossParser implements ConfigurationParser
 {
-	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class));
+	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class, CustomChange.class));
 	protected StringBuilder stringBuilder = new StringBuilder();
 
 	@Override
@@ -158,6 +159,9 @@ public class DefaultJbossParser implements ConfigurationParser
 		else if (baseEntry instanceof ChangeLogLevel)
 		{
 			handleEntry((ChangeLogLevel) baseEntry);
+		}
+		else if(baseEntry instanceof CustomChange){
+			handleEntry((CustomChange) baseEntry);
 		}
 	}
 
@@ -397,5 +401,11 @@ public class DefaultJbossParser implements ConfigurationParser
 	{
 		stringBuilder.append("/subsystem=logging/logger=").append(entry.getPackage());
 		stringBuilder.append(":add(level=").append(entry.getType().value()).append(")\n");
+	}
+
+	protected void handleEntry(CustomChange baseEntry)
+	{
+		stringBuilder.append(baseEntry.getChange());
+		stringBuilder.append('\n');
 	}
 }

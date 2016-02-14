@@ -24,6 +24,7 @@ import nl.eernie.as.aschangelog.AddProperty;
 import nl.eernie.as.aschangelog.AddQueue;
 import nl.eernie.as.aschangelog.AddSecurityDomain;
 import nl.eernie.as.aschangelog.ChangeLogLevel;
+import nl.eernie.as.aschangelog.CustomChange;
 import nl.eernie.as.aschangelog.DeleteConnectionFactory;
 import nl.eernie.as.aschangelog.DeleteDLQ;
 import nl.eernie.as.aschangelog.DeleteDatasource;
@@ -353,6 +354,17 @@ public class DefaultJbossParserTest
 		baseEntry.setType(LogLevels.DEBUG);
 		parser.handle(baseEntry);
 		List<String> expected = Collections.singletonList("/subsystem=logging/logger=nl.eernie:add(level=DEBUG)");
+		verifyOutput(parser, expected);
+	}
+
+	@Test
+	public void testCustomChange() throws IOException
+	{
+		DefaultJbossParser parser = new DefaultJbossParser();
+		CustomChange baseEntry = new CustomChange();
+		baseEntry.setChange("This is a custom change");
+		parser.handle(baseEntry);
+		List<String> expected = Collections.singletonList("This is a custom change");
 		verifyOutput(parser, expected);
 	}
 
