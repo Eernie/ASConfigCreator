@@ -1,0 +1,40 @@
+<%import>
+  java.util.Date;
+  nl.eernie.as.changelog.ChangeLog;
+  nl.eernie.as.changelog.Version;
+  nl.eernie.as.aschangelog.AddProperty;
+  nl.eernie.as.aschangelog.UpdateProperty;
+  nl.eernie.as.aschangelog.DeleteProperty;
+</%import>
+<%args>
+  ChangeLog changelog;
+  Date effectiveDate;
+</%args>
+
+<%for Version version: changelog.getVersions() %>
+# Version: <% version.getName() %>
+
+<%if version.getChanges().containsKey(AddProperty.class)%>
+### Added properties:
+
+	<%for AddProperty property: version.getChanges(AddProperty.class)%>
+- <% property.getName() %> -> <% property.getValue() %>
+	</%for>
+</%if>
+
+<%if version.getChanges().containsKey(UpdateProperty.class)%>
+### Updated properties:
+
+	<%for UpdateProperty property: version.getChanges(UpdateProperty.class)%>
+- <% property.getName() %> -> <% property.getValue() %>
+	</%for>
+</%if>
+
+<%if version.getChanges().containsKey(DeleteProperty.class)%>
+### Deleted properties:
+
+	<%for DeleteProperty property: version.getChanges(DeleteProperty.class)%>
+- <% property.getName() %>
+	</%for>
+</%if>
+</%for>

@@ -1,0 +1,16 @@
+<applicationServerChangeLog xmlns="http://www.eernie.nl/as/aschangelog">
+
+	<changeSet context="core" author="e.oldenkamp">
+		<addProperty name="property that will not be processed" value="value"/>
+	</changeSet>
+
+	<tag version="1.0.0" author="e.oldenkamp"/>
+	<changeSet context="core" author="e.oldenkamp">
+		<addProperty name="property that will be processed" value="value"/>
+	</changeSet>
+
+	<tag version="1.0.1" author="e.oldenkamp"/>
+	<changeSet context="core" author="e.oldenkamp">
+		<addProperty name="property that is after the tag" value="so will not be processed"/>
+	</changeSet>
+</applicationServerChangeLog>

@@ -23,6 +23,7 @@ import nl.eernie.as.aschangelog.Include;
 import nl.eernie.as.aschangelog.Tag;
 import nl.eernie.as.configuration.Configuration;
 import nl.eernie.as.parsers.ConfigurationParser;
+import nl.eernie.as.reporter.Reporter;
 import nl.eernie.as.variables.VariableReplacer;
 
 import org.apache.commons.io.FileUtils;
@@ -39,7 +40,7 @@ public class ASConfigCreator
 	public ASConfigCreator(Configuration configuration)
 	{
 		this.configuration = configuration;
-		initializeConfigurationParser();
+		initializeConfiguration();
 	}
 
 	public void createConfigFiles(String changeLogFilePath) throws IOException
@@ -50,6 +51,10 @@ public class ASConfigCreator
 		for (ConfigurationParser configurationParser : configurationParsers.get(null))
 		{
 			configurationParser.writeFileToDirectory(configuration.getOutputDirectoryPath());
+		}
+		for (Reporter reporter : configuration.getReporters())
+		{
+			reporter.writeFileToDirectory(configuration.getOutputDirectoryPath());
 		}
 	}
 
@@ -90,6 +95,15 @@ public class ASConfigCreator
 		{
 			fromTagFound = true;
 		}
+
+		if (fromTagFound && !endTagFound)
+		{
+			for (Reporter reporter : configuration.getReporters())
+			{
+				reporter.tag(tag);
+			}
+		}
+
 		if (tag.getVersion().equals(configuration.getToTag()))
 		{
 			endTagFound = true;
@@ -125,6 +139,10 @@ public class ASConfigCreator
 
 		for (BaseEntry baseEntry : changeSet.getChangeSetEntry())
 		{
+			for (Reporter reporter : configuration.getReporters())
+			{
+				reporter.reportEntry(baseEntry);
+			}
 			for (ConfigurationParser configurationParser : configurationParsers)
 			{
 				if (configurationParser.canHandleChangeLogEntry(baseEntry))
@@ -192,7 +210,7 @@ public class ASConfigCreator
 		return null;
 	}
 
-	private void initializeConfigurationParser()
+	private void initializeConfiguration()
 	{
 		Reflections reflections = new Reflections("nl.eernie.as");
 		Set<Class<? extends ConfigurationParser>> configurationParserClasses = reflections.getSubTypesOf(ConfigurationParser.class);
@@ -213,6 +231,20 @@ public class ASConfigCreator
 			catch (InstantiationException | IllegalAccessException e)
 			{
 				throw new RuntimeException("Couldn't instantiate new parser of class: " + configurationParserClass);
+			}
+		}
+
+		Set<Class<? extends Reporter>> reporterClasses = reflections.getSubTypesOf(Reporter.class);
+		for (Class<? extends Reporter> reporterClass : reporterClasses)
+		{
+			try
+			{
+				Reporter reporter = reporterClass.newInstance();
+				configuration.addReporter(reporter);
+			}
+			catch (InstantiationException | IllegalAccessException e)
+			{
+				throw new RuntimeException("Couldn't instantiate new reporter of class: " + reporterClass);
 			}
 		}
 	}

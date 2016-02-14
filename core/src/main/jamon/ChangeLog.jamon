@@ -1,0 +1,10 @@
+<%args>
+  java.util.Date date;
+  String [] s;
+</%args>
+Hello, world on <% date %>.
+The arguments are:
+<%java int l = s.length; %>
+<%for int i = 0; i < l; ++i %>
+<% s[i] %>
+</%for>

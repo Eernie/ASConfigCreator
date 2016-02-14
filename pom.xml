@@ -17,7 +17,8 @@
     <modules>
         <module>core</module>
         <module>maven-plugin</module>
-    </modules>
+		<module>ASConfig-changelog-reporter</module>
+	</modules>
 
     <profiles>
         <profile>
