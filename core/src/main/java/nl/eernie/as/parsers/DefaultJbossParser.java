@@ -2,6 +2,9 @@ package nl.eernie.as.parsers;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -185,11 +188,23 @@ public class DefaultJbossParser implements ConfigurationParser
 	@Override
 	public void initParser(Configuration configuration)
 	{
+		String host = null;
+		try
+		{
+			InetAddress localHost = InetAddress.getLocalHost();
+			host = localHost.getHostName() + '(' + System.getProperty("user.name")+ ')';
+		}
+		catch (UnknownHostException e)
+		{
+			host = "unknown";
+		}
+
 		stringBuilder = new StringBuilder();
 		stringBuilder.append("## *********************************************************************\n");
 		stringBuilder.append("## Generated JBOSS CLI script\n");
 		stringBuilder.append("## *********************************************************************\n");
 		stringBuilder.append("## Generated on: ").append(DateFormat.getDateTimeInstance().format(new Date())).append('\n');
+		stringBuilder.append("## Created by: ").append(host).append('\n');
 		stringBuilder.append("## Configuration: ").append(configuration).append('\n');
 		stringBuilder.append("## *********************************************************************\n");
 	}
