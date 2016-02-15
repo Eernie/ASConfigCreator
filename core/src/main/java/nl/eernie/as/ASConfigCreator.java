@@ -58,17 +58,20 @@ public class ASConfigCreator
 		ApplicationServerChangeLog applicationServerChangeLog = createApplicationServerChangeLog(changeLogFilePath);
 		for (Include include : applicationServerChangeLog.getInclude())
 		{
-			String path;
-			if (include.isRelativeToCurrentFile())
+			if (include.getContext() == null || (include.getContext() != null && configurationHasContext(include.getContext())))
 			{
-				path = FilenameUtils.getFullPath(changeLogFilePath);
-				path = path + include.getPath();
+				String path;
+				if (include.isRelativeToCurrentFile())
+				{
+					path = FilenameUtils.getFullPath(changeLogFilePath);
+					path = path + include.getPath();
+				}
+				else
+				{
+					path = include.getPath();
+				}
+				parseFile(path);
 			}
-			else
-			{
-				path = include.getPath();
-			}
-			parseFile(path);
 		}
 
 		for (Serializable entry : applicationServerChangeLog.getChangeLogEntry())

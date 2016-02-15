@@ -53,7 +53,7 @@ public class ASConfigCreatorTest
 
 		String outputFile = outputDirectory.toString() + "/jboss.cli";
 
-		List<String> expected = Arrays.asList("batch", "/system-property=property:add(value=property)", "run-batch", "");
+		List<String> expected = Arrays.asList("batch", "/system-property=property:add(value=property)", "run-batch", "", "batch", "/system-property=property:add(value=property)", "run-batch", "");
 		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
 		assertEquals(expected, actual);
 	}

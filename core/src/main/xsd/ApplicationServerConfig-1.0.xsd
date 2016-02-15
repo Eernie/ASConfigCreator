@@ -33,6 +33,7 @@
     <xsd:complexType name="include">
         <xsd:attribute name="path" type="xsd:string" use="required"/>
         <xsd:attribute name="relativeToCurrentFile" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="context" type="xsd:string" use="optional"/>
     </xsd:complexType>
 
     <xsd:group name="changeSetEntry">

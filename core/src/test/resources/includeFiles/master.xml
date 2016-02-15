@@ -1,3 +1,5 @@
 <applicationServerChangeLog xmlns="http://www.eernie.nl/as/aschangelog">
 	<include path="include.xml" relativeToCurrentFile="true"/>
+	<include path="include.xml" context="core"/>
+	<include path="include.xml" context="DONT_PROCESS"/>
 </applicationServerChangeLog>
