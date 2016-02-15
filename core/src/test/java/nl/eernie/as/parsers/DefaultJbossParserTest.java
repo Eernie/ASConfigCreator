@@ -40,6 +40,7 @@ import nl.eernie.as.aschangelog.UpdateMailSession;
 import nl.eernie.as.aschangelog.UpdateProperty;
 import nl.eernie.as.aschangelog.UpdateQueue;
 import nl.eernie.as.aschangelog.UpdateSecurityDomain;
+import nl.eernie.as.configuration.Configuration;
 
 import org.junit.Test;
 
@@ -366,6 +367,26 @@ public class DefaultJbossParserTest
 		parser.handle(baseEntry);
 		List<String> expected = Collections.singletonList("This is a custom change");
 		verifyOutput(parser, expected);
+	}
+
+	@Test
+	public void testInitParser() throws IOException
+	{
+		DefaultJbossParser parser = new DefaultJbossParser();
+		parser.initParser(new Configuration());
+
+		Path tempDirectory = Files.createTempDirectory("junit");
+		parser.writeFileToDirectory(tempDirectory.toFile());
+		Path outputFile = Paths.get(tempDirectory.toString() + "/jboss.cli");
+		List<String> fileContent = Files.readAllLines(outputFile, Charset.defaultCharset());
+
+		assertEquals("## Generated JBOSS CLI script", fileContent.get(1));
+		assertTrue(fileContent.get(3).startsWith("## Generated on: "));
+		assertEquals("## Configuration: Configuration{applicationServers=[], contexts=[], properties={}, fromTag='null', toTag='null', outputDirectoryPath=null}", fileContent.get(4));
+
+		Files.deleteIfExists(outputFile);
+		Files.deleteIfExists(tempDirectory);
+
 	}
 
 	private void verifyOutput(DefaultJbossParser parser, List<String> expected) throws IOException

@@ -2,7 +2,9 @@ package nl.eernie.as.parsers;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,6 +40,7 @@ import nl.eernie.as.aschangelog.UpdateMailSession;
 import nl.eernie.as.aschangelog.UpdateProperty;
 import nl.eernie.as.aschangelog.UpdateQueue;
 import nl.eernie.as.aschangelog.UpdateSecurityDomain;
+import nl.eernie.as.configuration.Configuration;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DefaultJbossParser implements ConfigurationParser
 {
 	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class, CustomChange.class));
-	protected StringBuilder stringBuilder = new StringBuilder();
+	protected StringBuilder stringBuilder;
 
 	@Override
 	public boolean canHandleChangeLogEntry(BaseEntry entry)
@@ -160,7 +163,8 @@ public class DefaultJbossParser implements ConfigurationParser
 		{
 			handleEntry((ChangeLogLevel) baseEntry);
 		}
-		else if(baseEntry instanceof CustomChange){
+		else if (baseEntry instanceof CustomChange)
+		{
 			handleEntry((CustomChange) baseEntry);
 		}
 	}
@@ -176,6 +180,18 @@ public class DefaultJbossParser implements ConfigurationParser
 	{
 		File file = new File(outputDirectoryPath, "jboss.cli");
 		FileUtils.write(file, stringBuilder);
+	}
+
+	@Override
+	public void initParser(Configuration configuration)
+	{
+		stringBuilder = new StringBuilder();
+		stringBuilder.append("## *********************************************************************\n");
+		stringBuilder.append("## Generated JBOSS CLI script\n");
+		stringBuilder.append("## *********************************************************************\n");
+		stringBuilder.append("## Generated on: ").append(DateFormat.getDateTimeInstance().format(new Date())).append('\n');
+		stringBuilder.append("## Configuration: ").append(configuration).append('\n');
+		stringBuilder.append("## *********************************************************************\n");
 	}
 
 	protected void addProperty(Property entry)
@@ -387,7 +403,6 @@ public class DefaultJbossParser implements ConfigurationParser
 		String joined = StringUtils.join(entry.getJndi().iterator(), "\",\"");
 		stringBuilder.append(":add(connector={\"in-vm\"=>undefined}, entries=[\"").append(joined).append("\"])");
 		stringBuilder.append('\n');
-
 	}
 
 	protected void handleEntry(DeleteConnectionFactory entry)

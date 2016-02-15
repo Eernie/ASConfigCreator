@@ -46,6 +46,10 @@ public class ASConfigCreator
 	{
 		fromTagFound = configuration.getFromTag() == null;
 		endTagFound = false;
+		for (ConfigurationParser configurationParser : configurationParsers.get(null))
+		{
+			configurationParser.initParser(configuration);
+		}
 		parseFile(changeLogFilePath);
 		for (ConfigurationParser configurationParser : configurationParsers.get(null))
 		{
