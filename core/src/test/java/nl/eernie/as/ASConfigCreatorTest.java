@@ -52,7 +52,7 @@ public class ASConfigCreatorTest
 
 		creator.createConfigFiles(getClass().getResource("/includeFiles/master.xml").getPath());
 
-		String outputFile = outputDirectory.toString() + "/jboss.cli";
+		String outputFile = outputDirectory.toString() + "/wildfly.cli";
 
 		List<String> expected = Arrays.asList("batch", "/system-property=property:add(value=property)", "run-batch", "", "batch", "/system-property=property:add(value=property)", "run-batch", "");
 		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
@@ -75,7 +75,7 @@ public class ASConfigCreatorTest
 
 		creator.createConfigFiles(getClass().getResource("/tags.xml").getPath());
 
-		String outputFile = outputDirectory.toString() + "/jboss.cli";
+		String outputFile = outputDirectory.toString() + "/wildfly.cli";
 
 		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "");
 		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
@@ -109,7 +109,7 @@ public class ASConfigCreatorTest
 
 		creator.createConfigFiles(getClass().getResource("/applicationServer.xml").getPath());
 
-		String outputFile = outputDirectory.toString() + "/jboss.cli";
+		String outputFile = outputDirectory.toString() + "/wildfly.cli";
 
 		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "", "batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "");
 		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
