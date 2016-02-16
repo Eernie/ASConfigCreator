@@ -23,6 +23,7 @@ import nl.eernie.as.aschangelog.DeleteDatasource;
 import nl.eernie.as.aschangelog.UpdateDatasource;
 import nl.eernie.as.configuration.Configuration;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 public class DefaultWildflyParserTest
@@ -123,7 +124,7 @@ public class DefaultWildflyParserTest
 		List<String> filtered = new ArrayList<>(actual.size());
 		for (String s : actual)
 		{
-			if (!s.startsWith("##"))
+			if (!s.startsWith("##") && StringUtils.isNotBlank(s))
 			{
 				filtered.add(s);
 			}

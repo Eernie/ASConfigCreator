@@ -63,7 +63,7 @@ public class VariableFinder
 				throw new IllegalArgumentException("Variable " + variable + " is not a correct variable");
 			}
 			String oldVar = "${" + variable + '}';
-			result = result.replace(oldVar, variable);
+			result = result.replace(oldVar, "$" + variable);
 		}
 		return result;
 	}

@@ -19,6 +19,7 @@ import nl.eernie.as.configuration.Configuration;
 import nl.eernie.as.parsers.ConfigurationParser;
 import nl.eernie.as.parsers.DefaultJbossParser;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
@@ -54,7 +55,7 @@ public class ASConfigCreatorTest
 
 		String outputFile = outputDirectory.toString() + "/wildfly.cli";
 
-		List<String> expected = Arrays.asList("batch", "/system-property=property:add(value=property)", "run-batch", "", "batch", "/system-property=property:add(value=property)", "run-batch", "");
+		List<String> expected = Arrays.asList("batch", "/system-property=property:add(value=property)", "run-batch", "batch", "/system-property=property:add(value=property)", "run-batch");
 		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
 		List<String> filteredActual = filterActual(actual);
 		assertEquals(expected, filteredActual);
@@ -77,7 +78,7 @@ public class ASConfigCreatorTest
 
 		String outputFile = outputDirectory.toString() + "/wildfly.cli";
 
-		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "");
+		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch");
 		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
 		List<String> filteredActual = filterActual(actual);
 		assertEquals(expected, filteredActual);
@@ -88,7 +89,7 @@ public class ASConfigCreatorTest
 		List<String> filtered = new ArrayList<>(actual.size());
 		for (String s : actual)
 		{
-			if (!s.startsWith("##"))
+			if (!s.startsWith("##") && StringUtils.isNotBlank(s))
 			{
 				filtered.add(s);
 			}
@@ -111,7 +112,7 @@ public class ASConfigCreatorTest
 
 		String outputFile = outputDirectory.toString() + "/wildfly.cli";
 
-		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "", "batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "");
+		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch","batch", "/system-property=property that will be processed:add(value=value)", "run-batch");
 		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
 		List<String> filteredActual = filterActual(actual);
 		assertEquals(expected, filteredActual);
