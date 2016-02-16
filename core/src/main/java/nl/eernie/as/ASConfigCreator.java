@@ -23,7 +23,7 @@ import nl.eernie.as.aschangelog.Include;
 import nl.eernie.as.aschangelog.Tag;
 import nl.eernie.as.configuration.Configuration;
 import nl.eernie.as.parsers.ConfigurationParser;
-import nl.eernie.as.variables.VariableReplacer;
+import nl.eernie.as.variables.VariableFinder;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -154,9 +154,9 @@ public class ASConfigCreator
 		try
 		{
 			String fileContent = FileUtils.readFileToString(file);
-			String replacedFile = VariableReplacer.replace(fileContent, configuration.getProperties());
+			configuration.getFoundVariables().addAll(VariableFinder.findVariables(fileContent));
 
-			InputStream inputStream = new ByteArrayInputStream(replacedFile.getBytes());
+			InputStream inputStream = new ByteArrayInputStream(fileContent.getBytes());
 			JAXBContext context = JAXBContext.newInstance(ApplicationServerChangeLog.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			return (ApplicationServerChangeLog) unmarshaller.unmarshal(inputStream);

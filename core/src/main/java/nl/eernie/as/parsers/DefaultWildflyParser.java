@@ -1,13 +1,23 @@
 package nl.eernie.as.parsers;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Properties;
+
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.AddDatasource;
 import nl.eernie.as.aschangelog.Datasource;
 import nl.eernie.as.aschangelog.DeleteDatasource;
 import nl.eernie.as.aschangelog.UpdateDatasource;
+import nl.eernie.as.configuration.Configuration;
+
+import org.apache.commons.io.FileUtils;
 
 public class DefaultWildflyParser extends DefaultJbossParser implements ConfigurationParser
 {
+	private Configuration configuration;
+
 	@Override
 	public boolean canHandleApplicationServer(ApplicationServer applicationServer)
 	{
@@ -45,5 +55,30 @@ public class DefaultWildflyParser extends DefaultJbossParser implements Configur
 		stringBuilder.append(" --jta=").append(entry.isJTA());
 		stringBuilder.append(" --enabled=").append(true);
 		stringBuilder.append('\n');
+	}
+
+	@Override
+	public void initParser(Configuration configuration)
+	{
+		super.initParser(configuration);
+		this.configuration = configuration;
+	}
+
+	@Override
+	public void writeFileToDirectory(File outputDirectoryPath) throws IOException
+	{
+		File file = new File(outputDirectoryPath, "wildfly.cli");
+		FileUtils.write(file, stringBuilder);
+
+		Properties properties = new Properties();
+		for (String key : configuration.getFoundVariables())
+		{
+			properties.put(key, "");
+		}
+
+		try (FileWriter writer = new FileWriter(new File(outputDirectoryPath, "wildfly.properties")))
+		{
+			properties.store(writer, "Generated Wildfly CLI properties");
+		}
 	}
 }

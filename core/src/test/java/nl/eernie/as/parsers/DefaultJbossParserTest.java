@@ -383,7 +383,7 @@ public class DefaultJbossParserTest
 		assertEquals("## Generated JBOSS CLI script", fileContent.get(1));
 		assertTrue(fileContent.get(3).startsWith("## Generated on: "));
 		assertTrue(fileContent.get(4).startsWith("## Created by: "));
-		assertEquals("## Configuration: Configuration{applicationServers=[], contexts=[], properties={}, fromTag='null', toTag='null', outputDirectoryPath=null}", fileContent.get(5));
+		assertEquals("## Configuration: " + new Configuration(), fileContent.get(5));
 
 		Files.deleteIfExists(outputFile);
 		Files.deleteIfExists(tempDirectory);
