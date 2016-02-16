@@ -3,7 +3,6 @@ package nl.eernie.as.parsers;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.util.Arrays;
@@ -51,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DefaultJbossParser implements ConfigurationParser
 {
 	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class, CustomChange.class));
+	protected StringBuilder header = new StringBuilder();
 	protected StringBuilder stringBuilder = new StringBuilder();
 
 	@Override
@@ -182,12 +182,14 @@ public class DefaultJbossParser implements ConfigurationParser
 	public void writeFileToDirectory(File outputDirectoryPath) throws IOException
 	{
 		File file = new File(outputDirectoryPath, "jboss.cli");
-		FileUtils.write(file, stringBuilder);
+		FileUtils.write(file, header.append(stringBuilder));
 	}
 
 	@Override
 	public void initParser(Configuration configuration)
 	{
+		stringBuilder = new StringBuilder();
+
 		String host = null;
 		try
 		{
@@ -199,14 +201,14 @@ public class DefaultJbossParser implements ConfigurationParser
 			host = "unknown";
 		}
 
-		stringBuilder = new StringBuilder();
-		stringBuilder.append("## *********************************************************************\n");
-		stringBuilder.append("## Generated JBOSS CLI script\n");
-		stringBuilder.append("## *********************************************************************\n");
-		stringBuilder.append("## Generated on: ").append(DateFormat.getDateTimeInstance().format(new Date())).append('\n');
-		stringBuilder.append("## Created by: ").append(host).append('\n');
-		stringBuilder.append("## Configuration: ").append(configuration).append('\n');
-		stringBuilder.append("## *********************************************************************\n");
+		header = new StringBuilder();
+		header.append("## *********************************************************************\n");
+		header.append("## Generated JBOSS CLI script\n");
+		header.append("## *********************************************************************\n");
+		header.append("## Generated on: ").append(DateFormat.getDateTimeInstance().format(new Date())).append('\n');
+		header.append("## Created by: ").append(host).append('\n');
+		header.append("## Configuration: ").append(configuration).append('\n');
+		header.append("## *********************************************************************\n");
 	}
 
 	protected void addProperty(Property entry)

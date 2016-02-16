@@ -62,7 +62,7 @@ public class DefaultWildflyParserTest
 		Configuration configuration = new Configuration();
 		configuration.getFoundVariables().add("driverModule");
 		parser.initParser(configuration);
-		List<String> expected = Collections.emptyList();
+		List<String> expected = Collections.singletonList("set driverModule=${driverModule}");
 		verifyOutput(parser, expected, Collections.singleton("driverModule"));
 	}
 
@@ -112,7 +112,7 @@ public class DefaultWildflyParserTest
 			actualProperties.load(reader);
 		}
 		assertEquals(expectedProperties, actualProperties.keySet());
-		
+
 		Files.deleteIfExists(outputFile);
 		Files.deleteIfExists(propertyFile);
 		Files.deleteIfExists(tempDirectory);

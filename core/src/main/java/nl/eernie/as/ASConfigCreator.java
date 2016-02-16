@@ -154,7 +154,9 @@ public class ASConfigCreator
 		try
 		{
 			String fileContent = FileUtils.readFileToString(file);
-			configuration.getFoundVariables().addAll(VariableFinder.findVariables(fileContent));
+			Set<String> variables = VariableFinder.findVariables(fileContent);
+			configuration.getFoundVariables().addAll(variables);
+			fileContent = VariableFinder.replaceWithoutBrackets(variables, fileContent);
 
 			InputStream inputStream = new ByteArrayInputStream(fileContent.getBytes());
 			JAXBContext context = JAXBContext.newInstance(ApplicationServerChangeLog.class);

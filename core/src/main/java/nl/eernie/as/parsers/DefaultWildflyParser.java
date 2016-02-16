@@ -11,6 +11,7 @@ import nl.eernie.as.aschangelog.Datasource;
 import nl.eernie.as.aschangelog.DeleteDatasource;
 import nl.eernie.as.aschangelog.UpdateDatasource;
 import nl.eernie.as.configuration.Configuration;
+import nl.eernie.as.util.SortedProperties;
 
 import org.apache.commons.io.FileUtils;
 
@@ -67,18 +68,20 @@ public class DefaultWildflyParser extends DefaultJbossParser implements Configur
 	@Override
 	public void writeFileToDirectory(File outputDirectoryPath) throws IOException
 	{
-		File file = new File(outputDirectoryPath, "wildfly.cli");
-		FileUtils.write(file, stringBuilder);
-
-		Properties properties = new Properties();
+		StringBuilder variablesBuilder = new StringBuilder();
+		Properties properties = new SortedProperties();
 		for (String key : configuration.getFoundVariables())
 		{
 			properties.put(key, "");
+			variablesBuilder.append(String.format("set %s=${%s}\n", key, key));
 		}
 
 		try (FileWriter writer = new FileWriter(new File(outputDirectoryPath, "wildfly.properties")))
 		{
 			properties.store(writer, "Generated Wildfly CLI properties");
 		}
+
+		File file = new File(outputDirectoryPath, "wildfly.cli");
+		FileUtils.write(file, header.append(variablesBuilder).append(stringBuilder));
 	}
 }
