@@ -1,5 +1,7 @@
 package nl.eernie.as;
 
+import java.io.File;
+
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -9,8 +11,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.eclipse.aether.DefaultRepositorySystemSession;
-
-import java.io.File;
 
 public class GenerateConfigFileMojoTest extends AbstractMojoTestCase
 {
@@ -27,7 +27,7 @@ public class GenerateConfigFileMojoTest extends AbstractMojoTestCase
 		GenerateConfigFileMojo mojo = (GenerateConfigFileMojo) lookupConfiguredMojo(project, "generateConfig");
 		mojo.execute();
 
-		assertTrue(new File("src/test/resources/validProject/target/asconfig/jboss.cli").exists());
+		assertTrue(new File("src/test/resources/validProject/target/asconfig/wildfly.cli").exists());
 	}
 
 	public void testInvalidProjectByNoSettings() throws Exception
