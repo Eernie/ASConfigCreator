@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Set;
 
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.AddDatasource;
@@ -12,6 +13,7 @@ import nl.eernie.as.aschangelog.DeleteDatasource;
 import nl.eernie.as.aschangelog.UpdateDatasource;
 import nl.eernie.as.configuration.Configuration;
 import nl.eernie.as.util.SortedProperties;
+import nl.eernie.as.variables.VariableFinder;
 
 import org.apache.commons.io.FileUtils;
 
@@ -70,14 +72,18 @@ public class DefaultWildflyParser extends DefaultJbossParser implements Configur
 	{
 		StringBuilder variablesBuilder = new StringBuilder();
 		Properties properties = new SortedProperties();
-		for (String key : configuration.getFoundVariables())
+
+		String fileContent = stringBuilder.toString();
+		Set<String> variables = VariableFinder.findVariables(fileContent);
+		fileContent = VariableFinder.replaceWithoutBrackets(variables, fileContent);
+		for (String key : variables)
 		{
 			properties.put(key, "");
 			variablesBuilder.append(String.format("set %s=${%s}\n", key, key));
 		}
 
 		File file = new File(outputDirectoryPath, "wildfly.cli");
-		FileUtils.write(file, header.append(variablesBuilder).append('\n').append(stringBuilder));
+		FileUtils.write(file, header.append(variablesBuilder).append('\n').append(fileContent));
 
 		try (FileWriter writer = new FileWriter(new File(outputDirectoryPath, "wildfly.properties")))
 		{

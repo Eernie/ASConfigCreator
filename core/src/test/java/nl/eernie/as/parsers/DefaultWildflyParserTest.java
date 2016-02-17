@@ -19,6 +19,7 @@ import java.util.Set;
 
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.AddDatasource;
+import nl.eernie.as.aschangelog.AddProperty;
 import nl.eernie.as.aschangelog.DeleteDatasource;
 import nl.eernie.as.aschangelog.UpdateDatasource;
 import nl.eernie.as.configuration.Configuration;
@@ -61,10 +62,12 @@ public class DefaultWildflyParserTest
 	{
 		DefaultWildflyParser parser = new DefaultWildflyParser();
 		Configuration configuration = new Configuration();
-		configuration.getFoundVariables().add("driverModule");
 		parser.initParser(configuration);
-		List<String> expected = Collections.singletonList("set driverModule=${driverModule}");
-		verifyOutput(parser, expected, Collections.singleton("driverModule"));
+		AddProperty baseEntry = new AddProperty();
+		baseEntry.setValue("${test}");
+		parser.handle(baseEntry);
+		List<String> expected = Arrays.asList("set test=${test}", "/system-property=null:add(value=$test)");
+		verifyOutput(parser, expected, Collections.singleton("test"));
 	}
 
 	@Test

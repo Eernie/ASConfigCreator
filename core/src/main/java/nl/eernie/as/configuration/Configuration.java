@@ -12,7 +12,6 @@ public class Configuration
 {
 	private final List<ApplicationServer> applicationServers = new LinkedList<>();
 	private final List<String> contexts = new LinkedList<>();
-	private final Set<String> foundVariables = new HashSet<>();
 	private String fromTag;
 	private String toTag;
 	private File outputDirectoryPath;
@@ -55,11 +54,6 @@ public class Configuration
 	public void setFromTag(String fromTag)
 	{
 		this.fromTag = fromTag;
-	}
-
-	public Set<String> getFoundVariables()
-	{
-		return foundVariables;
 	}
 
 	@Override

@@ -153,21 +153,11 @@ public class ASConfigCreator
 
 		try
 		{
-			String fileContent = FileUtils.readFileToString(file);
-			Set<String> variables = VariableFinder.findVariables(fileContent);
-			configuration.getFoundVariables().addAll(variables);
-			fileContent = VariableFinder.replaceWithoutBrackets(variables, fileContent);
-
-			InputStream inputStream = new ByteArrayInputStream(fileContent.getBytes());
 			JAXBContext context = JAXBContext.newInstance(ApplicationServerChangeLog.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
-			return (ApplicationServerChangeLog) unmarshaller.unmarshal(inputStream);
+			return (ApplicationServerChangeLog) unmarshaller.unmarshal(file);
 		}
-		catch (FileNotFoundException e)
-		{
-			throw new RuntimeException("File couldn't be found", e);
-		}
-		catch (JAXBException | IOException e)
+		catch (JAXBException e)
 		{
 			throw new RuntimeException("Something went wrong while unmarshalling the file " + changeLogFilePath, e);
 		}
