@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import nl.eernie.as.Version;
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.AddConnectionFactory;
 import nl.eernie.as.aschangelog.AddDLQ;
@@ -383,7 +384,8 @@ public class DefaultJbossParserTest
 		assertEquals("## Generated JBOSS CLI script", fileContent.get(1));
 		assertTrue(fileContent.get(3).startsWith("## Generated on: "));
 		assertTrue(fileContent.get(4).startsWith("## Created by: "));
-		assertEquals("## Configuration: " + new Configuration(), fileContent.get(5));
+		assertEquals("## Generated with version: " + Version.getVersion(), fileContent.get(5));
+		assertEquals("## Configuration: " + new Configuration(), fileContent.get(6));
 
 		Files.deleteIfExists(outputFile);
 		Files.deleteIfExists(tempDirectory);

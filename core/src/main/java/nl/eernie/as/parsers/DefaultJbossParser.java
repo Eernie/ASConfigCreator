@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import nl.eernie.as.Version;
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.AddConnectionFactory;
 import nl.eernie.as.aschangelog.AddDLQ;
@@ -207,6 +208,7 @@ public class DefaultJbossParser implements ConfigurationParser
 		header.append("## *********************************************************************\n");
 		header.append("## Generated on: ").append(DateFormat.getDateTimeInstance().format(new Date())).append('\n');
 		header.append("## Created by: ").append(host).append('\n');
+		header.append("## Generated with version: ").append(Version.getVersion()).append('\n');
 		header.append("## Configuration: ").append(configuration).append('\n');
 		header.append("## *********************************************************************\n");
 	}
