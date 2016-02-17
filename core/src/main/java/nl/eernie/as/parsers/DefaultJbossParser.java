@@ -210,7 +210,7 @@ public class DefaultJbossParser implements ConfigurationParser
 		header.append("## Created by: ").append(host).append('\n');
 		header.append("## Generated with version: ").append(Version.getVersion()).append('\n');
 		header.append("## Configuration: ").append(configuration).append('\n');
-		header.append("## *********************************************************************\n");
+		header.append("## *********************************************************************\n\n");
 	}
 
 	protected void addProperty(Property entry)
