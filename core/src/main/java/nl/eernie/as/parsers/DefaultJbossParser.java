@@ -20,6 +20,7 @@ import nl.eernie.as.aschangelog.AddMailSession;
 import nl.eernie.as.aschangelog.AddProperty;
 import nl.eernie.as.aschangelog.AddQueue;
 import nl.eernie.as.aschangelog.AddSecurityDomain;
+import nl.eernie.as.aschangelog.AddXADatasource;
 import nl.eernie.as.aschangelog.BaseEntry;
 import nl.eernie.as.aschangelog.ChangeLogLevel;
 import nl.eernie.as.aschangelog.CustomChange;
@@ -32,6 +33,7 @@ import nl.eernie.as.aschangelog.DeleteMailSession;
 import nl.eernie.as.aschangelog.DeleteProperty;
 import nl.eernie.as.aschangelog.DeleteQueue;
 import nl.eernie.as.aschangelog.DeleteSecurityDomain;
+import nl.eernie.as.aschangelog.DeleteXADatasource;
 import nl.eernie.as.aschangelog.Driver;
 import nl.eernie.as.aschangelog.MailSession;
 import nl.eernie.as.aschangelog.Property;
@@ -43,6 +45,7 @@ import nl.eernie.as.aschangelog.UpdateMailSession;
 import nl.eernie.as.aschangelog.UpdateProperty;
 import nl.eernie.as.aschangelog.UpdateQueue;
 import nl.eernie.as.aschangelog.UpdateSecurityDomain;
+import nl.eernie.as.aschangelog.UpdateXADatasource;
 import nl.eernie.as.configuration.Configuration;
 
 import org.apache.commons.io.FileUtils;
@@ -50,7 +53,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class DefaultJbossParser implements ConfigurationParser
 {
-	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class, CustomChange.class));
+	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class, CustomChange.class, AddXADatasource.class, UpdateXADatasource.class, DeleteXADatasource.class));
 	protected StringBuilder header = new StringBuilder();
 	protected StringBuilder stringBuilder = new StringBuilder();
 
@@ -191,11 +194,11 @@ public class DefaultJbossParser implements ConfigurationParser
 	{
 		stringBuilder = new StringBuilder();
 
-		String host = null;
+		String host;
 		try
 		{
 			InetAddress localHost = InetAddress.getLocalHost();
-			host = localHost.getHostName() + '(' + System.getProperty("user.name")+ ')';
+			host = localHost.getHostName() + '(' + System.getProperty("user.name") + ')';
 		}
 		catch (UnknownHostException e)
 		{
@@ -303,7 +306,12 @@ public class DefaultJbossParser implements ConfigurationParser
 	{
 		stringBuilder.append("/subsystem=datasources/jdbc-driver=").append(entry.getName());
 		stringBuilder.append(":add(driver-name=").append(entry.getName());
-		stringBuilder.append(",driver-module-name=").append(entry.getModule()).append(')');
+		stringBuilder.append(",driver-module-name=").append(entry.getModule());
+		if (entry.getXaDriver() != null)
+		{
+			stringBuilder.append(",driver-xa-datasource-class-name=").append(entry.getXaDriver());
+		}
+		stringBuilder.append(')');
 		stringBuilder.append('\n');
 	}
 

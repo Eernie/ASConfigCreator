@@ -20,8 +20,12 @@ import java.util.Set;
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.AddDatasource;
 import nl.eernie.as.aschangelog.AddProperty;
+import nl.eernie.as.aschangelog.AddXADatasource;
 import nl.eernie.as.aschangelog.DeleteDatasource;
+import nl.eernie.as.aschangelog.DeleteXADatasource;
 import nl.eernie.as.aschangelog.UpdateDatasource;
+import nl.eernie.as.aschangelog.UpdateXADatasource;
+import nl.eernie.as.aschangelog.XaProperty;
 import nl.eernie.as.configuration.Configuration;
 
 import org.apache.commons.lang3.StringUtils;
@@ -97,6 +101,59 @@ public class DefaultWildflyParserTest
 		baseEntry.setName("DS");
 		parser.handle(baseEntry);
 		List<String> expected = Collections.singletonList("data-source remove --name=DS");
+		verifyOutput(parser, expected, Collections.<String> emptySet());
+	}
+
+	@Test
+	public void testAddXADatasource() throws IOException
+	{
+		DefaultWildflyParser parser = new DefaultWildflyParser();
+		AddXADatasource baseEntry = new AddXADatasource();
+		baseEntry.setName("name");
+		baseEntry.setDriverName("driver");
+		baseEntry.setJndi("jndi");
+		baseEntry.setJTA(true);
+		baseEntry.setUsername("user");
+		baseEntry.setPassword("pass");
+
+		XaProperty property = new XaProperty();
+		property.setName("serverName");
+		property.setValue("pass");
+		baseEntry.getProperty().add(property);
+		parser.handle(baseEntry);
+		List<String> expected = Arrays.asList("xa-data-source add --name=name --driver-name=driver --jndi-name=jndi --user-name=user --password=pass --jta=true", "/subsystem=datasources/xa-data-source=name/xa-datasource-properties=serverName:add(value=pass)");
+		verifyOutput(parser, expected, Collections.<String> emptySet());
+	}
+
+	@Test
+	public void testUpdateXADatasource() throws IOException
+	{
+		DefaultWildflyParser parser = new DefaultWildflyParser();
+		UpdateXADatasource baseEntry = new UpdateXADatasource();
+		baseEntry.setName("name");
+		baseEntry.setDriverName("driver");
+		baseEntry.setJndi("jndi");
+		baseEntry.setJTA(true);
+		baseEntry.setUsername("user");
+		baseEntry.setPassword("pass");
+
+		XaProperty property = new XaProperty();
+		property.setName("serverName");
+		property.setValue("pass");
+		baseEntry.getProperty().add(property);
+		parser.handle(baseEntry);
+		List<String> expected = Arrays.asList("xa-data-source remove --name=name", "xa-data-source add --name=name --driver-name=driver --jndi-name=jndi --user-name=user --password=pass --jta=true", "/subsystem=datasources/xa-data-source=name/xa-datasource-properties=serverName:add(value=pass)");
+		verifyOutput(parser, expected, Collections.<String> emptySet());
+	}
+
+	@Test
+	public void testDeleteXADatasource() throws IOException
+	{
+		DefaultWildflyParser parser = new DefaultWildflyParser();
+		DeleteXADatasource baseEntry = new DeleteXADatasource();
+		baseEntry.setName("name");
+		parser.handle(baseEntry);
+		List<String> expected = Collections.singletonList("xa-data-source remove --name=name");
 		verifyOutput(parser, expected, Collections.<String> emptySet());
 	}
 

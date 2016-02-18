@@ -53,10 +53,14 @@
             <xsd:element name="addDriver" type="addDriver"/>
             <xsd:element name="updateDriver" type="updateDriver"/>
             <xsd:element name="deleteDriver" type="deleteDriver"/>
-            <!-- Datasource -->
-            <xsd:element name="addDatasource" type="addDatasource"/>
-            <xsd:element name="updateDatasource" type="updateDatasource"/>
-            <xsd:element name="deleteDatasource" type="deleteDatasource"/>
+			<!-- Datasource -->
+			<xsd:element name="addDatasource" type="addDatasource"/>
+			<xsd:element name="updateDatasource" type="updateDatasource"/>
+			<xsd:element name="deleteDatasource" type="deleteDatasource"/>
+			<!-- XA-Datasource -->
+			<xsd:element name="addXADatasource" type="addXADatasource"/>
+			<xsd:element name="updateXADatasource" type="updateXADatasource"/>
+			<xsd:element name="deleteXADatasource" type="deleteXADatasource"/>
             <!-- Security domain -->
             <xsd:element name="addSecurityDomain" type="addSecurityDomain"/>
             <xsd:element name="updateSecurityDomain" type="updateSecurityDomain"/>
@@ -106,6 +110,43 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
+
+	<xsd:complexType abstract="true" name="xaDatasource">
+		<xsd:complexContent>
+			<xsd:extension base="baseEntry">
+				<xsd:sequence>
+					<xsd:element name="jndi" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+					<xsd:element name="username" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="password" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="property" type="xaProperty" minOccurs="1" maxOccurs="unbounded"/>
+				</xsd:sequence>
+				<xsd:attribute name="name" type="xsd:string" use="required"/>
+				<xsd:attribute name="driverName" type="xsd:string" use="required"/>
+				<xsd:attribute name="JTA" type="xsd:boolean" default="true" use="optional"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="xaProperty">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="addXADatasource">
+		<xsd:complexContent>
+			<xsd:extension base="xaDatasource"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="updateXADatasource">
+		<xsd:complexContent>
+			<xsd:extension base="xaDatasource"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="deleteXADatasource">
+		<xsd:complexContent>
+			<xsd:extension base="baseEntry">
+				<xsd:attribute name="name" type="xsd:string" use="required"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
 
     <xsd:complexType abstract="true" name="property">
         <xsd:complexContent>
@@ -168,6 +209,7 @@
                     <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="classpath" type="xsd:string" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="module" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="xa-driver" type="xsd:string" minOccurs="0" maxOccurs="1"/>
                 </xsd:sequence>
                 <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:extension>

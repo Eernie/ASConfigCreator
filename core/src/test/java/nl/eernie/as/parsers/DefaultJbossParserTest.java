@@ -178,8 +178,9 @@ public class DefaultJbossParserTest
 		baseEntry.setName("driver");
 		baseEntry.setClasspath("/lib/driver.jar");
 		baseEntry.setModule("driverModule");
+		baseEntry.setXaDriver("nl.some.XA.Driver");
 		parser.handle(baseEntry);
-		List<String> expected = Collections.singletonList("/subsystem=datasources/jdbc-driver=driver:add(driver-name=driver,driver-module-name=driverModule)");
+		List<String> expected = Collections.singletonList("/subsystem=datasources/jdbc-driver=driver:add(driver-name=driver,driver-module-name=driverModule,driver-xa-datasource-class-name=nl.some.XA.Driver)");
 		verifyOutput(parser, expected);
 	}
 
