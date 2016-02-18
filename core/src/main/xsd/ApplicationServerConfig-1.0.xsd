@@ -122,7 +122,6 @@
 				</xsd:sequence>
 				<xsd:attribute name="name" type="xsd:string" use="required"/>
 				<xsd:attribute name="driverName" type="xsd:string" use="required"/>
-				<xsd:attribute name="JTA" type="xsd:boolean" default="true" use="optional"/>
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

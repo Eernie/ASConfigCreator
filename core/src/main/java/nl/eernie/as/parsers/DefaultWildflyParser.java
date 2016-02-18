@@ -126,7 +126,6 @@ public class DefaultWildflyParser extends DefaultJbossParser implements Configur
 		stringBuilder.append(" --jndi-name=").append(entry.getJndi());
 		stringBuilder.append(" --user-name=").append(entry.getUsername());
 		stringBuilder.append(" --password=").append(entry.getPassword());
-		stringBuilder.append(" --jta=").append(entry.isJTA());
 		stringBuilder.append('\n');
 
 		for (XaProperty xaProperty : entry.getProperty())

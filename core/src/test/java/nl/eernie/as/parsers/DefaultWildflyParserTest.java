@@ -112,7 +112,6 @@ public class DefaultWildflyParserTest
 		baseEntry.setName("name");
 		baseEntry.setDriverName("driver");
 		baseEntry.setJndi("jndi");
-		baseEntry.setJTA(true);
 		baseEntry.setUsername("user");
 		baseEntry.setPassword("pass");
 
@@ -121,7 +120,7 @@ public class DefaultWildflyParserTest
 		property.setValue("pass");
 		baseEntry.getProperty().add(property);
 		parser.handle(baseEntry);
-		List<String> expected = Arrays.asList("xa-data-source add --name=name --driver-name=driver --jndi-name=jndi --user-name=user --password=pass --jta=true", "/subsystem=datasources/xa-data-source=name/xa-datasource-properties=serverName:add(value=pass)");
+		List<String> expected = Arrays.asList("xa-data-source add --name=name --driver-name=driver --jndi-name=jndi --user-name=user --password=pass", "/subsystem=datasources/xa-data-source=name/xa-datasource-properties=serverName:add(value=pass)");
 		verifyOutput(parser, expected, Collections.<String> emptySet());
 	}
 
@@ -133,7 +132,6 @@ public class DefaultWildflyParserTest
 		baseEntry.setName("name");
 		baseEntry.setDriverName("driver");
 		baseEntry.setJndi("jndi");
-		baseEntry.setJTA(true);
 		baseEntry.setUsername("user");
 		baseEntry.setPassword("pass");
 
@@ -142,7 +140,7 @@ public class DefaultWildflyParserTest
 		property.setValue("pass");
 		baseEntry.getProperty().add(property);
 		parser.handle(baseEntry);
-		List<String> expected = Arrays.asList("xa-data-source remove --name=name", "xa-data-source add --name=name --driver-name=driver --jndi-name=jndi --user-name=user --password=pass --jta=true", "/subsystem=datasources/xa-data-source=name/xa-datasource-properties=serverName:add(value=pass)");
+		List<String> expected = Arrays.asList("xa-data-source remove --name=name", "xa-data-source add --name=name --driver-name=driver --jndi-name=jndi --user-name=user --password=pass", "/subsystem=datasources/xa-data-source=name/xa-datasource-properties=serverName:add(value=pass)");
 		verifyOutput(parser, expected, Collections.<String> emptySet());
 	}
 
