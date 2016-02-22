@@ -296,7 +296,7 @@ public class DefaultJbossParserTest
 		baseEntry.setName("MS");
 		baseEntry.setJndi("java;/mail");
 		baseEntry.setHostname("localhost");
-		baseEntry.setPort(BigInteger.valueOf(25L));
+		baseEntry.setPort("25");
 		parser.handle(baseEntry);
 		List<String> expected = Arrays.asList("/subsystem=mail/mail-session=MS:add(jndi-name=java;/mail)", "/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=MS:add(host=localhost,port=25)", "/subsystem=mail/mail-session=MS/server=smtp:add( outbound-socket-binding-ref=MS)");
 		verifyOutput(parser, expected);
