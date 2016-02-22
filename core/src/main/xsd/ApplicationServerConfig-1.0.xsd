@@ -269,7 +269,8 @@
                     <xsd:element name="port" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="user" type="xsd:string" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="password" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element name="strict" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="strict" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="ssl" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
                 </xsd:sequence>
                 <xsd:attribute name="name" type="xsd:string" use="required"/>
                 <xsd:attribute name="jndi" type="xsd:string" use="required"/>
