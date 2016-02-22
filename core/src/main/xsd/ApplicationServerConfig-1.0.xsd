@@ -266,7 +266,7 @@
             <xsd:extension base="baseEntry">
                 <xsd:sequence>
                     <xsd:element name="hostname" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element name="port" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="port" type="xsd:string" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="user" type="xsd:string" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="password" type="xsd:string" minOccurs="0" maxOccurs="1"/>
 					<xsd:element name="strict" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
