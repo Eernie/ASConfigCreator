@@ -412,26 +412,19 @@ public class DefaultJbossParser implements ConfigurationParser
 
 	protected void addMailSession(MailSession entry)
 	{
+		stringBuilder.append("/subsystem=mail/mail-session=").append(entry.getName());
+		stringBuilder.append(":add(jndi-name=").append(entry.getJndi()).append(')');
+		stringBuilder.append('\n');
+
 		if (entry.getHostname() != null && entry.getPort() != null)
 		{
 			stringBuilder.append("/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=");
 			stringBuilder.append(entry.getName());
 			stringBuilder.append(":add(host=").append(entry.getHostname());
 			stringBuilder.append(",port=").append(entry.getPort()).append(")\n");
-		}
 
-		stringBuilder.append("/subsystem=mail/mail-session=").append(entry.getName());
-		stringBuilder.append(":add(jndi-name=").append(entry.getJndi()).append(')');
-		stringBuilder.append('\n');
-
-		if (entry.getPassword() != null && entry.getUser() != null)
-		{
-			boolean ssl = entry.isSsl() != null ? entry.isSsl() : false;
 			stringBuilder.append("/subsystem=mail/mail-session=").append(entry.getName());
-			stringBuilder.append("/server=smtp:add( outbound-socket-binding-ref=").append(entry.getName());
-			stringBuilder.append(", ssl=").append(ssl);
-			stringBuilder.append(", username=").append(entry.getUser());
-			stringBuilder.append(", password=").append(entry.getPassword()).append(")\n");
+			stringBuilder.append("/server=smtp:add( outbound-socket-binding-ref=").append(entry.getName()).append(")\n");
 		}
 	}
 
