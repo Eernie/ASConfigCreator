@@ -1,10 +1,7 @@
 package nl.eernie.as;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -23,9 +20,7 @@ import nl.eernie.as.aschangelog.Include;
 import nl.eernie.as.aschangelog.Tag;
 import nl.eernie.as.configuration.Configuration;
 import nl.eernie.as.parsers.ConfigurationParser;
-import nl.eernie.as.variables.VariableFinder;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.reflections.Reflections;
 

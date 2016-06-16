@@ -3,6 +3,7 @@ package nl.eernie.as;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +52,7 @@ public class GenerateConfigFileMojo extends AbstractMojo
 		ASConfigCreator asConfigCreator = new ASConfigCreator(configuration);
 		try
 		{
-			asConfigCreator.createConfigFiles(masterFile.getAbsolutePath());
+			asConfigCreator.createConfigFiles(Paths.get(masterFile.getAbsolutePath()).toUri().toURL().getPath());
 		}
 		catch (IOException e)
 		{
