@@ -31,6 +31,12 @@ public class GenerateConfigFileMojo extends AbstractMojo
 	@Parameter(required = true)
 	private File settingsFile;
 
+	@Parameter(property = "asconfig.contexts")
+	private String contexts;
+
+	@Parameter(property = "asconfig.applicationsServers")
+	private String applicationServers;
+
 	@Parameter(required = true, defaultValue = "${project.basedir}/src/main/asconfig/master.xml")
 	private File masterFile;
 
@@ -104,6 +110,14 @@ public class GenerateConfigFileMojo extends AbstractMojo
 		try (FileInputStream inStream = new FileInputStream(settingsFile))
 		{
 			properties.load(inStream);
+			if(contexts !=null)
+			{
+				properties.setProperty(CONTEXTS, contexts);
+			}
+			if(applicationServers !=null)
+			{
+				properties.setProperty(APPLICATION_SERVERS, applicationServers);
+			}
 			return properties;
 		}
 		catch (IOException e)
