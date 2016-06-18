@@ -26,8 +26,6 @@
                 <version>1.0-SNAPSHOT</version>
                 <configuration>
                     <settingsFile>${basedir}/settings.properties</settingsFile>
-					<contexts>core</contexts>
-					<applicationServers>jboss</applicationServers>
                 </configuration>
             </plugin>
         </plugins>
