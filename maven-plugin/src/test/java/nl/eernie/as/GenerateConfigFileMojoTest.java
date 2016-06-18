@@ -30,6 +30,22 @@ public class GenerateConfigFileMojoTest extends AbstractMojoTestCase
 		assertTrue(new File("src/test/resources/validProject/target/asconfig/wildfly.cli").exists());
 	}
 
+	public void testValidWithEscapedCharProject() throws Exception
+	{
+		File pom = getTestFile("src/test/resources/validProject%2Fasdf/pom.xml");
+
+		MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
+		ProjectBuildingRequest buildingRequest = executionRequest.getProjectBuildingRequest();
+		buildingRequest.setRepositorySession(new DefaultRepositorySystemSession());
+		ProjectBuilder projectBuilder = this.lookup(ProjectBuilder.class);
+		MavenProject project = projectBuilder.build(pom, buildingRequest).getProject();
+
+		GenerateConfigFileMojo mojo = (GenerateConfigFileMojo) lookupConfiguredMojo(project, "generateConfig");
+		mojo.execute();
+
+		assertTrue(new File("src/test/resources/validProject%2Fasdf/target/asconfig/wildfly.cli").exists());
+	}
+
 	public void testInvalidProjectByNoSettings() throws Exception
 	{
 		File pom = getTestFile("src/test/resources/invalidProject/pom.xml");
