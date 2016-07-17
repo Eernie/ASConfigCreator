@@ -2,10 +2,15 @@ package nl.eernie.as.parsers;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.text.DateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import nl.eernie.as.Version;
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.AddConnectionFactory;
 import nl.eernie.as.aschangelog.AddDLQ;
@@ -15,8 +20,10 @@ import nl.eernie.as.aschangelog.AddMailSession;
 import nl.eernie.as.aschangelog.AddProperty;
 import nl.eernie.as.aschangelog.AddQueue;
 import nl.eernie.as.aschangelog.AddSecurityDomain;
+import nl.eernie.as.aschangelog.AddXADatasource;
 import nl.eernie.as.aschangelog.BaseEntry;
 import nl.eernie.as.aschangelog.ChangeLogLevel;
+import nl.eernie.as.aschangelog.CustomChange;
 import nl.eernie.as.aschangelog.Datasource;
 import nl.eernie.as.aschangelog.DeleteConnectionFactory;
 import nl.eernie.as.aschangelog.DeleteDLQ;
@@ -26,6 +33,7 @@ import nl.eernie.as.aschangelog.DeleteMailSession;
 import nl.eernie.as.aschangelog.DeleteProperty;
 import nl.eernie.as.aschangelog.DeleteQueue;
 import nl.eernie.as.aschangelog.DeleteSecurityDomain;
+import nl.eernie.as.aschangelog.DeleteXADatasource;
 import nl.eernie.as.aschangelog.Driver;
 import nl.eernie.as.aschangelog.MailSession;
 import nl.eernie.as.aschangelog.Property;
@@ -37,13 +45,16 @@ import nl.eernie.as.aschangelog.UpdateMailSession;
 import nl.eernie.as.aschangelog.UpdateProperty;
 import nl.eernie.as.aschangelog.UpdateQueue;
 import nl.eernie.as.aschangelog.UpdateSecurityDomain;
+import nl.eernie.as.aschangelog.UpdateXADatasource;
+import nl.eernie.as.configuration.Configuration;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class DefaultJbossParser implements ConfigurationParser
 {
-	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class));
+	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class, CustomChange.class, AddXADatasource.class, UpdateXADatasource.class, DeleteXADatasource.class));
+	protected StringBuilder header = new StringBuilder();
 	protected StringBuilder stringBuilder = new StringBuilder();
 
 	@Override
@@ -159,6 +170,10 @@ public class DefaultJbossParser implements ConfigurationParser
 		{
 			handleEntry((ChangeLogLevel) baseEntry);
 		}
+		else if (baseEntry instanceof CustomChange)
+		{
+			handleEntry((CustomChange) baseEntry);
+		}
 	}
 
 	@Override
@@ -171,7 +186,34 @@ public class DefaultJbossParser implements ConfigurationParser
 	public void writeFileToDirectory(File outputDirectoryPath) throws IOException
 	{
 		File file = new File(outputDirectoryPath, "jboss.cli");
-		FileUtils.write(file, stringBuilder);
+		FileUtils.write(file, header.append(stringBuilder));
+	}
+
+	@Override
+	public void initParser(Configuration configuration)
+	{
+		stringBuilder = new StringBuilder();
+
+		String host;
+		try
+		{
+			InetAddress localHost = InetAddress.getLocalHost();
+			host = localHost.getHostName() + '(' + System.getProperty("user.name") + ')';
+		}
+		catch (UnknownHostException e)
+		{
+			host = "unknown";
+		}
+
+		header = new StringBuilder();
+		header.append("## *********************************************************************\n");
+		header.append("## Generated JBOSS CLI script\n");
+		header.append("## *********************************************************************\n");
+		header.append("## Generated on: ").append(DateFormat.getDateTimeInstance().format(new Date())).append('\n');
+		header.append("## Created by: ").append(host).append('\n');
+		header.append("## Generated with version: ").append(Version.getVersion()).append('\n');
+		header.append("## Configuration: ").append(configuration).append('\n');
+		header.append("## *********************************************************************\n\n");
 	}
 
 	protected void addProperty(Property entry)
@@ -264,7 +306,12 @@ public class DefaultJbossParser implements ConfigurationParser
 	{
 		stringBuilder.append("/subsystem=datasources/jdbc-driver=").append(entry.getName());
 		stringBuilder.append(":add(driver-name=").append(entry.getName());
-		stringBuilder.append(",driver-module-name=").append(entry.getModule()).append(')');
+		stringBuilder.append(",driver-module-name=").append(entry.getModule());
+		if (entry.getXaDriver() != null)
+		{
+			stringBuilder.append(",driver-xa-datasource-class-name=").append(entry.getXaDriver());
+		}
+		stringBuilder.append(')');
 		stringBuilder.append('\n');
 	}
 
@@ -368,6 +415,17 @@ public class DefaultJbossParser implements ConfigurationParser
 		stringBuilder.append("/subsystem=mail/mail-session=").append(entry.getName());
 		stringBuilder.append(":add(jndi-name=").append(entry.getJndi()).append(')');
 		stringBuilder.append('\n');
+
+		if (entry.getHostname() != null && entry.getPort() != null)
+		{
+			stringBuilder.append("/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=");
+			stringBuilder.append(entry.getName());
+			stringBuilder.append(":add(host=").append(entry.getHostname());
+			stringBuilder.append(",port=").append(entry.getPort()).append(")\n");
+
+			stringBuilder.append("/subsystem=mail/mail-session=").append(entry.getName());
+			stringBuilder.append("/server=smtp:add( outbound-socket-binding-ref=").append(entry.getName()).append(")\n");
+		}
 	}
 
 	protected void deleteMailSession(String entry)
@@ -383,7 +441,6 @@ public class DefaultJbossParser implements ConfigurationParser
 		String joined = StringUtils.join(entry.getJndi().iterator(), "\",\"");
 		stringBuilder.append(":add(connector={\"in-vm\"=>undefined}, entries=[\"").append(joined).append("\"])");
 		stringBuilder.append('\n');
-
 	}
 
 	protected void handleEntry(DeleteConnectionFactory entry)
@@ -397,5 +454,11 @@ public class DefaultJbossParser implements ConfigurationParser
 	{
 		stringBuilder.append("/subsystem=logging/logger=").append(entry.getPackage());
 		stringBuilder.append(":add(level=").append(entry.getType().value()).append(")\n");
+	}
+
+	protected void handleEntry(CustomChange baseEntry)
+	{
+		stringBuilder.append(baseEntry.getChange());
+		stringBuilder.append('\n');
 	}
 }

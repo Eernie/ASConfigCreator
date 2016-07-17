@@ -5,7 +5,7 @@
     <groupId>nl.eernie.as</groupId>
     <artifactId>ASConfigCreator</artifactId>
     <packaging>pom</packaging>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>0.5.0-SNAPSHOT</version>
     <name>ASConfigCreator</name>
     <description>Create configs for you application server</description>
     <url>https://github.com/Eernie/ASConfigCreator</url>
@@ -175,6 +175,7 @@
                         <useReleaseProfile>false</useReleaseProfile>
                         <releaseProfiles>release</releaseProfiles>
                         <goals>deploy</goals>
+						<tagNameFormat>@{project.version}</tagNameFormat>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -216,6 +217,11 @@
                         </instrumentation>
                     </configuration>
                 </plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>templating-maven-plugin</artifactId>
+					<version>1.0.0</version>
+				</plugin>
             </plugins>
         </pluginManagement>
         <plugins>

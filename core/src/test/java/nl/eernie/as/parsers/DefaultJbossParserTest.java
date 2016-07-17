@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import nl.eernie.as.Version;
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.AddConnectionFactory;
 import nl.eernie.as.aschangelog.AddDLQ;
@@ -24,6 +25,7 @@ import nl.eernie.as.aschangelog.AddProperty;
 import nl.eernie.as.aschangelog.AddQueue;
 import nl.eernie.as.aschangelog.AddSecurityDomain;
 import nl.eernie.as.aschangelog.ChangeLogLevel;
+import nl.eernie.as.aschangelog.CustomChange;
 import nl.eernie.as.aschangelog.DeleteConnectionFactory;
 import nl.eernie.as.aschangelog.DeleteDLQ;
 import nl.eernie.as.aschangelog.DeleteDatasource;
@@ -39,6 +41,7 @@ import nl.eernie.as.aschangelog.UpdateMailSession;
 import nl.eernie.as.aschangelog.UpdateProperty;
 import nl.eernie.as.aschangelog.UpdateQueue;
 import nl.eernie.as.aschangelog.UpdateSecurityDomain;
+import nl.eernie.as.configuration.Configuration;
 
 import org.junit.Test;
 
@@ -175,8 +178,9 @@ public class DefaultJbossParserTest
 		baseEntry.setName("driver");
 		baseEntry.setClasspath("/lib/driver.jar");
 		baseEntry.setModule("driverModule");
+		baseEntry.setXaDriver("nl.some.XA.Driver");
 		parser.handle(baseEntry);
-		List<String> expected = Collections.singletonList("/subsystem=datasources/jdbc-driver=driver:add(driver-name=driver,driver-module-name=driverModule)");
+		List<String> expected = Collections.singletonList("/subsystem=datasources/jdbc-driver=driver:add(driver-name=driver,driver-module-name=driverModule,driver-xa-datasource-class-name=nl.some.XA.Driver)");
 		verifyOutput(parser, expected);
 	}
 
@@ -291,8 +295,10 @@ public class DefaultJbossParserTest
 		AddMailSession baseEntry = new AddMailSession();
 		baseEntry.setName("MS");
 		baseEntry.setJndi("java;/mail");
+		baseEntry.setHostname("localhost");
+		baseEntry.setPort("25");
 		parser.handle(baseEntry);
-		List<String> expected = Collections.singletonList("/subsystem=mail/mail-session=MS:add(jndi-name=java;/mail)");
+		List<String> expected = Arrays.asList("/subsystem=mail/mail-session=MS:add(jndi-name=java;/mail)", "/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=MS:add(host=localhost,port=25)", "/subsystem=mail/mail-session=MS/server=smtp:add( outbound-socket-binding-ref=MS)");
 		verifyOutput(parser, expected);
 	}
 
@@ -354,6 +360,39 @@ public class DefaultJbossParserTest
 		parser.handle(baseEntry);
 		List<String> expected = Collections.singletonList("/subsystem=logging/logger=nl.eernie:add(level=DEBUG)");
 		verifyOutput(parser, expected);
+	}
+
+	@Test
+	public void testCustomChange() throws IOException
+	{
+		DefaultJbossParser parser = new DefaultJbossParser();
+		CustomChange baseEntry = new CustomChange();
+		baseEntry.setChange("This is a custom change");
+		parser.handle(baseEntry);
+		List<String> expected = Collections.singletonList("This is a custom change");
+		verifyOutput(parser, expected);
+	}
+
+	@Test
+	public void testInitParser() throws IOException
+	{
+		DefaultJbossParser parser = new DefaultJbossParser();
+		parser.initParser(new Configuration());
+
+		Path tempDirectory = Files.createTempDirectory("junit");
+		parser.writeFileToDirectory(tempDirectory.toFile());
+		Path outputFile = Paths.get(tempDirectory.toString() + "/jboss.cli");
+		List<String> fileContent = Files.readAllLines(outputFile, Charset.defaultCharset());
+
+		assertEquals("## Generated JBOSS CLI script", fileContent.get(1));
+		assertTrue(fileContent.get(3).startsWith("## Generated on: "));
+		assertTrue(fileContent.get(4).startsWith("## Created by: "));
+		assertEquals("## Generated with version: " + Version.getVersion(), fileContent.get(5));
+		assertEquals("## Configuration: " + new Configuration(), fileContent.get(6));
+
+		Files.deleteIfExists(outputFile);
+		Files.deleteIfExists(tempDirectory);
+
 	}
 
 	private void verifyOutput(DefaultJbossParser parser, List<String> expected) throws IOException

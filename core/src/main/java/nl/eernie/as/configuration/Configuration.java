@@ -1,18 +1,17 @@
 package nl.eernie.as.configuration;
 
-import nl.eernie.as.application_server.ApplicationServer;
-
 import java.io.File;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+
+import nl.eernie.as.application_server.ApplicationServer;
 
 public class Configuration
 {
 	private final List<ApplicationServer> applicationServers = new LinkedList<>();
 	private final List<String> contexts = new LinkedList<>();
-	private final Map<String, String> properties = new HashMap<>();
 	private String fromTag;
 	private String toTag;
 	private File outputDirectoryPath;
@@ -35,16 +34,6 @@ public class Configuration
 	public void setOutputDirectoryPath(File outputDirectoryPath)
 	{
 		this.outputDirectoryPath = outputDirectoryPath;
-	}
-
-	public Map<String, String> getProperties()
-	{
-		return properties;
-	}
-
-	public void addProperties(Map<String, String> properties)
-	{
-		this.properties.putAll(properties);
 	}
 
 	public String getToTag()
@@ -73,7 +62,6 @@ public class Configuration
 		return "Configuration{" +
 			"applicationServers=" + applicationServers +
 			", contexts=" + contexts +
-			", properties=" + properties +
 			", fromTag='" + fromTag + '\'' +
 			", toTag='" + toTag + '\'' +
 			", outputDirectoryPath=" + outputDirectoryPath +

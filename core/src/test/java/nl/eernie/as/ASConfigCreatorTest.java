@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import nl.eernie.as.configuration.Configuration;
 import nl.eernie.as.parsers.ConfigurationParser;
 import nl.eernie.as.parsers.DefaultJbossParser;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
@@ -51,11 +53,12 @@ public class ASConfigCreatorTest
 
 		creator.createConfigFiles(getClass().getResource("/includeFiles/master.xml").getPath());
 
-		String outputFile = outputDirectory.toString() + "/jboss.cli";
+		String outputFile = outputDirectory.toString() + "/wildfly.cli";
 
-		List<String> expected = Arrays.asList("batch", "/system-property=property:add(value=property)", "run-batch", "");
+		List<String> expected = Arrays.asList("batch", "/system-property=property:add(value=property)", "run-batch", "batch", "/system-property=property:add(value=property)", "run-batch");
 		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
-		assertEquals(expected, actual);
+		List<String> filteredActual = filterActual(actual);
+		assertEquals(expected, filteredActual);
 	}
 
 	@Test
@@ -73,11 +76,25 @@ public class ASConfigCreatorTest
 
 		creator.createConfigFiles(getClass().getResource("/tags.xml").getPath());
 
-		String outputFile = outputDirectory.toString() + "/jboss.cli";
+		String outputFile = outputDirectory.toString() + "/wildfly.cli";
 
-		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "");
+		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch");
 		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
-		assertEquals(expected, actual);
+		List<String> filteredActual = filterActual(actual);
+		assertEquals(expected, filteredActual);
+	}
+
+	private List<String> filterActual(List<String> actual)
+	{
+		List<String> filtered = new ArrayList<>(actual.size());
+		for (String s : actual)
+		{
+			if (!s.startsWith("##") && StringUtils.isNotBlank(s))
+			{
+				filtered.add(s);
+			}
+		}
+		return filtered;
 	}
 
 	@Test
@@ -93,10 +110,11 @@ public class ASConfigCreatorTest
 
 		creator.createConfigFiles(getClass().getResource("/applicationServer.xml").getPath());
 
-		String outputFile = outputDirectory.toString() + "/jboss.cli";
+		String outputFile = outputDirectory.toString() + "/wildfly.cli";
 
-		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "", "batch", "/system-property=property that will be processed:add(value=value)", "run-batch", "");
+		List<String> expected = Arrays.asList("batch", "/system-property=property that will be processed:add(value=value)", "run-batch","batch", "/system-property=property that will be processed:add(value=value)", "run-batch");
 		List<String> actual = Files.readAllLines(Paths.get(outputFile), Charset.defaultCharset());
-		assertEquals(expected, actual);
+		List<String> filteredActual = filterActual(actual);
+		assertEquals(expected, filteredActual);
 	}
 }

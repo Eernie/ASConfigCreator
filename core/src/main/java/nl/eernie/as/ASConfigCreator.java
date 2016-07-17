@@ -1,10 +1,7 @@
 package nl.eernie.as;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -26,9 +23,7 @@ import nl.eernie.as.aschangelog.Include;
 import nl.eernie.as.aschangelog.Tag;
 import nl.eernie.as.configuration.Configuration;
 import nl.eernie.as.parsers.ConfigurationParser;
-import nl.eernie.as.variables.VariableReplacer;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.reflections.Reflections;
 import org.xml.sax.SAXException;
@@ -52,6 +47,10 @@ public class ASConfigCreator
 	{
 		fromTagFound = configuration.getFromTag() == null;
 		endTagFound = false;
+		for (ConfigurationParser configurationParser : configurationParsers.get(null))
+		{
+			configurationParser.initParser(configuration);
+		}
 		parseFile(changeLogFilePath);
 		for (ConfigurationParser configurationParser : configurationParsers.get(null))
 		{
@@ -64,17 +63,20 @@ public class ASConfigCreator
 		ApplicationServerChangeLog applicationServerChangeLog = createApplicationServerChangeLog(changeLogFilePath);
 		for (Include include : applicationServerChangeLog.getInclude())
 		{
-			String path;
-			if (include.isRelativeToCurrentFile())
+			if (include.getContext() == null || include.getContext() != null && configurationHasContext(include.getContext()))
 			{
-				path = FilenameUtils.getFullPath(changeLogFilePath);
-				path = path + include.getPath();
+				String path;
+				if (include.isRelativeToCurrentFile())
+				{
+					path = FilenameUtils.getFullPath(changeLogFilePath);
+					path = path + include.getPath();
+				}
+				else
+				{
+					path = include.getPath();
+				}
+				parseFile(path);
 			}
-			else
-			{
-				path = include.getPath();
-			}
-			parseFile(path);
 		}
 
 		for (Serializable entry : applicationServerChangeLog.getChangeLogEntry())
@@ -152,23 +154,15 @@ public class ASConfigCreator
 
 		try
 		{
-			String fileContent = FileUtils.readFileToString(file);
-			String replacedFile = VariableReplacer.replace(fileContent, configuration.getProperties());
-
 			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			Schema schema = sf.newSchema(ASConfigCreator.class.getResource("/" + APPLICATION_SERVER_CONFIG_XSD));
 
-			InputStream inputStream = new ByteArrayInputStream(replacedFile.getBytes());
 			JAXBContext context = JAXBContext.newInstance(ApplicationServerChangeLog.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			unmarshaller.setSchema(schema);
-			return (ApplicationServerChangeLog) unmarshaller.unmarshal(inputStream);
+			return (ApplicationServerChangeLog) unmarshaller.unmarshal(file);
 		}
-		catch (FileNotFoundException e)
-		{
-			throw new RuntimeException("File couldn't be found", e);
-		}
-		catch (JAXBException | IOException e)
+		catch (JAXBException e)
 		{
 			throw new RuntimeException("Something went wrong while unmarshalling the file " + changeLogFilePath, e);
 		}
@@ -186,7 +180,7 @@ public class ASConfigCreator
 			boolean negate = context.startsWith("!");
 			context = context.replace("!", "");
 			boolean contains = configuration.getContexts().contains(context);
-			if ((contains && !negate) || (!contains && negate))
+			if (contains && !negate || !contains && negate)
 			{
 				return true;
 			}
