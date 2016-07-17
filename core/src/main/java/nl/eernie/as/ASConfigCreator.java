@@ -8,9 +8,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.ApplicationServerChangeLog;
@@ -23,9 +26,12 @@ import nl.eernie.as.parsers.ConfigurationParser;
 
 import org.apache.commons.io.FilenameUtils;
 import org.reflections.Reflections;
+import org.xml.sax.SAXException;
 
 public class ASConfigCreator
 {
+	private static final String APPLICATION_SERVER_CONFIG_XSD = "ApplicationServerConfig-1.0.xsd";
+
 	private Configuration configuration;
 	private Map<ApplicationServer, Set<ConfigurationParser>> configurationParsers = new HashMap<>();
 	private boolean fromTagFound;
@@ -57,7 +63,7 @@ public class ASConfigCreator
 		ApplicationServerChangeLog applicationServerChangeLog = createApplicationServerChangeLog(changeLogFilePath);
 		for (Include include : applicationServerChangeLog.getInclude())
 		{
-			if (include.getContext() == null || (include.getContext() != null && configurationHasContext(include.getContext())))
+			if (include.getContext() == null || include.getContext() != null && configurationHasContext(include.getContext()))
 			{
 				String path;
 				if (include.isRelativeToCurrentFile())
@@ -148,13 +154,21 @@ public class ASConfigCreator
 
 		try
 		{
+			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			Schema schema = sf.newSchema(ASConfigCreator.class.getResource("/" + APPLICATION_SERVER_CONFIG_XSD));
+
 			JAXBContext context = JAXBContext.newInstance(ApplicationServerChangeLog.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
+			unmarshaller.setSchema(schema);
 			return (ApplicationServerChangeLog) unmarshaller.unmarshal(file);
 		}
 		catch (JAXBException e)
 		{
 			throw new RuntimeException("Something went wrong while unmarshalling the file " + changeLogFilePath, e);
+		}
+		catch (SAXException e)
+		{
+			throw new RuntimeException("Something went wrong while parsing file " + changeLogFilePath, e);
 		}
 	}
 
@@ -166,7 +180,7 @@ public class ASConfigCreator
 			boolean negate = context.startsWith("!");
 			context = context.replace("!", "");
 			boolean contains = configuration.getContexts().contains(context);
-			if ((contains && !negate) || (!contains && negate))
+			if (contains && !negate || !contains && negate)
 			{
 				return true;
 			}
