@@ -20,6 +20,7 @@ import nl.eernie.as.aschangelog.Include;
 import nl.eernie.as.aschangelog.Tag;
 import nl.eernie.as.configuration.Configuration;
 import nl.eernie.as.parsers.ConfigurationParser;
+import nl.eernie.as.variables.logicexpression.BooleanLogic;
 
 import org.apache.commons.io.FilenameUtils;
 import org.reflections.Reflections;
@@ -160,18 +161,7 @@ public class ASConfigCreator
 
 	private boolean configurationHasContext(String contextList)
 	{
-		String[] contexts = contextList.split(",");
-		for (String context : contexts)
-		{
-			boolean negate = context.startsWith("!");
-			context = context.replace("!", "");
-			boolean contains = configuration.getContexts().contains(context);
-			if ((contains && !negate) || (!contains && negate))
-			{
-				return true;
-			}
-		}
-		return false;
+		return BooleanLogic.matches(contextList, configuration.getContexts());
 	}
 
 	private ApplicationServer getApplicationServer(String applicationServer)
