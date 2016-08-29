@@ -300,6 +300,11 @@
             <xsd:extension base="baseEntry">
                 <xsd:sequence>
                     <xsd:element name="monitorAddress" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                    <xsd:element name="expiryAddress" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="maxDeliveryAttempts" type="xsd:long" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="maxSizeBytes" type="xsd:long" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="pageSizeBytes" type="xsd:long" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="messageCounterHistoryDayLimit" type="xsd:long" minOccurs="0" maxOccurs="1"/>
                 </xsd:sequence>
                 <xsd:attribute name="deliveryQueue" type="xsd:string" use="required"/>
             </xsd:extension>

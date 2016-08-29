@@ -147,7 +147,7 @@ public class DefaultJbossParserTest
 	}
 
 	@Test
-	public void testAddDLQ() throws IOException
+	public void testAddDLQWithNoExtraProperties() throws IOException
 	{
 		DefaultJbossParser parser = new DefaultJbossParser();
 		AddDLQ baseEntry = new AddDLQ();
@@ -155,6 +155,23 @@ public class DefaultJbossParserTest
 		baseEntry.getMonitorAddress().add("address");
 		parser.handle(baseEntry);
 		List<String> expected = Collections.singletonList("/subsystem=messaging/hornetq-server=default/address-setting=address:add(dead-letter-address=dlq)");
+		verifyOutput(parser, expected);
+	}
+
+	@Test
+	public void testAddDLQWithExtraProperties() throws IOException
+	{
+		DefaultJbossParser parser = new DefaultJbossParser();
+		AddDLQ baseEntry = new AddDLQ();
+		baseEntry.setDeliveryQueue("dlq");
+		baseEntry.getMonitorAddress().add("address");
+		baseEntry.setExpiryAddress("expiryAddress");
+		baseEntry.setMaxDeliveryAttempts(1L);
+		baseEntry.setMaxSizeBytes(10485760L);
+		baseEntry.setPageSizeBytes(2097152L);
+		baseEntry.setMessageCounterHistoryDayLimit(10L);
+		parser.handle(baseEntry);
+		List<String> expected = Collections.singletonList("/subsystem=messaging/hornetq-server=default/address-setting=address:add(dead-letter-address=dlq,expiry-address=expiryAddress,max-delivery-attempts=1,max-size-bytes=10485760,page-size-bytes=2097152,message-counter-history-day-limit=10)");
 		verifyOutput(parser, expected);
 	}
 

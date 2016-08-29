@@ -275,7 +275,28 @@ public class DefaultJbossParser implements ConfigurationParser
 		for (String matchingJndi : entry.getMonitorAddress())
 		{
 			stringBuilder.append("/subsystem=messaging/hornetq-server=default/address-setting=").append(matchingJndi);
-			stringBuilder.append(":add(dead-letter-address=").append(entry.getDeliveryQueue()).append(')');
+			stringBuilder.append(":add(dead-letter-address=").append(entry.getDeliveryQueue());
+			if (entry.getExpiryAddress() != null)
+			{
+				stringBuilder.append(",expiry-address=").append(entry.getExpiryAddress());
+			}
+			if (entry.getMaxDeliveryAttempts() != null)
+			{
+				stringBuilder.append(",max-delivery-attempts=").append(entry.getMaxDeliveryAttempts());
+			}
+			if (entry.getMaxSizeBytes() != null)
+			{
+				stringBuilder.append(",max-size-bytes=").append(entry.getMaxSizeBytes());
+			}
+			if (entry.getPageSizeBytes() != null)
+			{
+				stringBuilder.append(",page-size-bytes=").append(entry.getPageSizeBytes());
+			}
+			if (entry.getMessageCounterHistoryDayLimit() != null)
+			{
+				stringBuilder.append(",message-counter-history-day-limit=").append(entry.getMessageCounterHistoryDayLimit());
+			}
+			stringBuilder.append(')');
 			stringBuilder.append('\n');
 		}
 	}
