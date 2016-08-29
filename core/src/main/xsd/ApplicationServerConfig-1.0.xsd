@@ -65,6 +65,9 @@
             <xsd:element name="addSecurityDomain" type="addSecurityDomain"/>
             <xsd:element name="updateSecurityDomain" type="updateSecurityDomain"/>
             <xsd:element name="deleteSecurityDomain" type="deleteSecurityDomain"/>
+			<!-- Keycloak adapter -->
+			<xsd:element name="addKeycloakAdapter" type="addKeycloakAdapter"/>
+			<xsd:element name="deleteKeycloakAdapter" type="deleteKeycloakAdapter"/>
             <!-- Mail session -->
             <xsd:element name="addMailSession" type="addMailSession"/>
             <xsd:element name="updateMailSession" type="updateMailSession"/>
@@ -260,6 +263,18 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
+
+	<xsd:complexType name="addKeycloakAdapter">
+		<xsd:complexContent>
+			<xsd:extension base="baseEntry"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="deleteKeycloakAdapter">
+		<xsd:complexContent>
+			<xsd:extension base="baseEntry"/>
+		</xsd:complexContent>
+	</xsd:complexType>
 
     <xsd:complexType name="mailSession">
         <xsd:complexContent>
