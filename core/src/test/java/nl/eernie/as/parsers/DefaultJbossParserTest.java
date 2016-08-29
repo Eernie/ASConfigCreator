@@ -20,6 +20,7 @@ import nl.eernie.as.aschangelog.AddConnectionFactory;
 import nl.eernie.as.aschangelog.AddDLQ;
 import nl.eernie.as.aschangelog.AddDatasource;
 import nl.eernie.as.aschangelog.AddDriver;
+import nl.eernie.as.aschangelog.AddKeycloakAdapter;
 import nl.eernie.as.aschangelog.AddMailSession;
 import nl.eernie.as.aschangelog.AddProperty;
 import nl.eernie.as.aschangelog.AddQueue;
@@ -30,6 +31,7 @@ import nl.eernie.as.aschangelog.DeleteConnectionFactory;
 import nl.eernie.as.aschangelog.DeleteDLQ;
 import nl.eernie.as.aschangelog.DeleteDatasource;
 import nl.eernie.as.aschangelog.DeleteDriver;
+import nl.eernie.as.aschangelog.DeleteKeycloakAdapter;
 import nl.eernie.as.aschangelog.DeleteMailSession;
 import nl.eernie.as.aschangelog.DeleteProperty;
 import nl.eernie.as.aschangelog.DeleteQueue;
@@ -370,6 +372,26 @@ public class DefaultJbossParserTest
 		baseEntry.setChange("This is a custom change");
 		parser.handle(baseEntry);
 		List<String> expected = Collections.singletonList("This is a custom change");
+		verifyOutput(parser, expected);
+	}
+
+	@Test
+	public void testAddKeyCloakAdapter() throws IOException
+	{
+		DefaultJbossParser parser = new DefaultJbossParser();
+		AddKeycloakAdapter baseEntry = new AddKeycloakAdapter();
+		parser.handle(baseEntry);
+		List<String> expected = Arrays.asList("/subsystem=security/security-domain=keycloak/:add", "/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ \"code\" => \"org.keycloak.adapters.jboss.KeycloakLoginModule\",\"flag\" => \"required\"}])", "/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)", "/subsystem=keycloak:add");
+		verifyOutput(parser, expected);
+	}
+
+	@Test
+	public void testDeleteKeyCloakAdapter() throws IOException
+	{
+		DefaultJbossParser parser = new DefaultJbossParser();
+		DeleteKeycloakAdapter baseEntry = new DeleteKeycloakAdapter();
+		parser.handle(baseEntry);
+		List<String> expected = Arrays.asList("/subsystem=keycloak:remove", "/extension=org.keycloak.keycloak-adapter-subsystem/:remove", "/subsystem=security/security-domain=keycloak/:remove");
 		verifyOutput(parser, expected);
 	}
 

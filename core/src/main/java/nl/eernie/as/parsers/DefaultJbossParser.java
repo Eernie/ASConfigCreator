@@ -16,6 +16,7 @@ import nl.eernie.as.aschangelog.AddConnectionFactory;
 import nl.eernie.as.aschangelog.AddDLQ;
 import nl.eernie.as.aschangelog.AddDatasource;
 import nl.eernie.as.aschangelog.AddDriver;
+import nl.eernie.as.aschangelog.AddKeycloakAdapter;
 import nl.eernie.as.aschangelog.AddMailSession;
 import nl.eernie.as.aschangelog.AddProperty;
 import nl.eernie.as.aschangelog.AddQueue;
@@ -29,6 +30,7 @@ import nl.eernie.as.aschangelog.DeleteConnectionFactory;
 import nl.eernie.as.aschangelog.DeleteDLQ;
 import nl.eernie.as.aschangelog.DeleteDatasource;
 import nl.eernie.as.aschangelog.DeleteDriver;
+import nl.eernie.as.aschangelog.DeleteKeycloakAdapter;
 import nl.eernie.as.aschangelog.DeleteMailSession;
 import nl.eernie.as.aschangelog.DeleteProperty;
 import nl.eernie.as.aschangelog.DeleteQueue;
@@ -173,6 +175,14 @@ public class DefaultJbossParser implements ConfigurationParser
 		else if (baseEntry instanceof CustomChange)
 		{
 			handleEntry((CustomChange) baseEntry);
+		}
+		else if (baseEntry instanceof AddKeycloakAdapter)
+		{
+			handleEntry((AddKeycloakAdapter) baseEntry);
+		}
+		else if (baseEntry instanceof DeleteKeycloakAdapter)
+		{
+			handleEntry((DeleteKeycloakAdapter) baseEntry);
 		}
 	}
 
@@ -460,5 +470,20 @@ public class DefaultJbossParser implements ConfigurationParser
 	{
 		stringBuilder.append(baseEntry.getChange());
 		stringBuilder.append('\n');
+	}
+
+	private void handleEntry(AddKeycloakAdapter addKeycloakAdapter)
+	{
+		stringBuilder.append("/subsystem=security/security-domain=keycloak/:add\n");
+		stringBuilder.append("/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ \"code\" => \"org.keycloak.adapters.jboss.KeycloakLoginModule\",\"flag\" => \"required\"}])\n");
+		stringBuilder.append("/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)\n");
+		stringBuilder.append("/subsystem=keycloak:add\n");
+	}
+
+	private void handleEntry(DeleteKeycloakAdapter deleteKeycloakAdapter)
+	{
+		stringBuilder.append("/subsystem=keycloak:remove\n");
+		stringBuilder.append("/extension=org.keycloak.keycloak-adapter-subsystem/:remove\n");
+		stringBuilder.append("/subsystem=security/security-domain=keycloak/:remove\n");
 	}
 }
