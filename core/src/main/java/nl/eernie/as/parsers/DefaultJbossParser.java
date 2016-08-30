@@ -55,7 +55,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class DefaultJbossParser implements ConfigurationParser
 {
-	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class, CustomChange.class, AddXADatasource.class, UpdateXADatasource.class, DeleteXADatasource.class));
+	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class, CustomChange.class, AddXADatasource.class, UpdateXADatasource.class, DeleteXADatasource.class, AddKeycloakAdapter.class, DeleteKeycloakAdapter.class));
 	protected StringBuilder header = new StringBuilder();
 	protected StringBuilder stringBuilder = new StringBuilder();
 
