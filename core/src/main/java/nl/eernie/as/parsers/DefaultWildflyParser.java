@@ -140,7 +140,7 @@ public class DefaultWildflyParser extends DefaultJbossParser implements Configur
 	@Override
 	public void writeFileToDirectory(File outputDirectoryPath) throws IOException
 	{
-		StringBuilder variablesBuilder = new StringBuilder();
+		StringBuilder variablesBuilder = new StringBuilder("\n");
 		Properties properties = new SortedProperties();
 
 		String fileContent = stringBuilder.toString();

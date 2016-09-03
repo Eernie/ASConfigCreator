@@ -408,7 +408,7 @@ public class DefaultJbossParserTest
 		DefaultJbossParser parser = new DefaultJbossParser();
 		DeleteKeycloakAdapter baseEntry = new DeleteKeycloakAdapter();
 		parser.handle(baseEntry);
-		List<String> expected = Arrays.asList("/subsystem=security/security-domain=keycloak/:remove", "/subsystem=keycloak:remove", "/extension=org.keycloak.keycloak-adapter-subsystem/:remove");
+		List<String> expected = Arrays.asList("/subsystem=security/security-domain=keycloak/:remove", "/extension=org.keycloak.keycloak-adapter-subsystem/:remove", "/subsystem=keycloak:remove");
 		verifyOutput(parser, expected);
 	}
 
@@ -431,7 +431,6 @@ public class DefaultJbossParserTest
 
 		Files.deleteIfExists(outputFile);
 		Files.deleteIfExists(tempDirectory);
-
 	}
 
 	private void verifyOutput(DefaultJbossParser parser, List<String> expected) throws IOException

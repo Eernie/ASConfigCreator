@@ -490,8 +490,15 @@ public class DefaultJbossParser implements ConfigurationParser
 
 	protected void handleEntry(CustomChange baseEntry)
 	{
-		stringBuilder.append(baseEntry.getChange());
-		stringBuilder.append('\n');
+		String[] entries = baseEntry.getChange().split("\r?\n");
+		for (String entry : entries)
+		{
+			String trimmed = entry.trim();
+			if (!trimmed.isEmpty())
+			{
+				stringBuilder.append(trimmed).append('\n');
+			}
+		}
 	}
 
 	private void handleEntry(AddKeycloakAdapter addKeycloakAdapter)
