@@ -398,7 +398,7 @@ public class DefaultJbossParserTest
 		DefaultJbossParser parser = new DefaultJbossParser();
 		AddKeycloakAdapter baseEntry = new AddKeycloakAdapter();
 		parser.handle(baseEntry);
-		List<String> expected = Arrays.asList("/subsystem=security/security-domain=keycloak/:add", "/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ \"code\" => \"org.keycloak.adapters.jboss.KeycloakLoginModule\",\"flag\" => \"required\"}])", "/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)", "/subsystem=keycloak:add");
+		List<String> expected = Arrays.asList("/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)", "/subsystem=keycloak:add", "/subsystem=security/security-domain=keycloak/:add", "/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ \"code\" => \"org.keycloak.adapters.jboss.KeycloakLoginModule\",\"flag\" => \"required\"}])");
 		verifyOutput(parser, expected);
 	}
 
@@ -408,7 +408,7 @@ public class DefaultJbossParserTest
 		DefaultJbossParser parser = new DefaultJbossParser();
 		DeleteKeycloakAdapter baseEntry = new DeleteKeycloakAdapter();
 		parser.handle(baseEntry);
-		List<String> expected = Arrays.asList("/subsystem=keycloak:remove", "/extension=org.keycloak.keycloak-adapter-subsystem/:remove", "/subsystem=security/security-domain=keycloak/:remove");
+		List<String> expected = Arrays.asList("/subsystem=security/security-domain=keycloak/:remove", "/subsystem=keycloak:remove", "/extension=org.keycloak.keycloak-adapter-subsystem/:remove");
 		verifyOutput(parser, expected);
 	}
 

@@ -58,6 +58,7 @@ public class DefaultJbossParser implements ConfigurationParser
 	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddProperty.class, UpdateProperty.class, DeleteProperty.class, AddQueue.class, UpdateQueue.class, DeleteQueue.class, AddDLQ.class, DeleteDLQ.class, AddDriver.class, UpdateDriver.class, DeleteDriver.class, AddDatasource.class, UpdateDatasource.class, DeleteDatasource.class, AddSecurityDomain.class, UpdateSecurityDomain.class, DeleteSecurityDomain.class, AddMailSession.class, UpdateMailSession.class, DeleteMailSession.class, AddConnectionFactory.class, DeleteConnectionFactory.class, ChangeLogLevel.class, CustomChange.class, AddXADatasource.class, UpdateXADatasource.class, DeleteXADatasource.class));
 	protected StringBuilder header = new StringBuilder();
 	protected StringBuilder stringBuilder = new StringBuilder();
+	protected StringBuilder footer = new StringBuilder();
 
 	@Override
 	public boolean canHandleChangeLogEntry(BaseEntry entry)
@@ -196,7 +197,7 @@ public class DefaultJbossParser implements ConfigurationParser
 	public void writeFileToDirectory(File outputDirectoryPath) throws IOException
 	{
 		File file = new File(outputDirectoryPath, "jboss.cli");
-		FileUtils.write(file, header.append(stringBuilder));
+		FileUtils.write(file, header.append(stringBuilder).append(footer));
 	}
 
 	@Override
@@ -497,14 +498,14 @@ public class DefaultJbossParser implements ConfigurationParser
 	{
 		stringBuilder.append("/subsystem=security/security-domain=keycloak/:add\n");
 		stringBuilder.append("/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ \"code\" => \"org.keycloak.adapters.jboss.KeycloakLoginModule\",\"flag\" => \"required\"}])\n");
-		stringBuilder.append("/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)\n");
-		stringBuilder.append("/subsystem=keycloak:add\n");
+		header.append("/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)\n");
+		header.append("/subsystem=keycloak:add\n");
 	}
 
 	private void handleEntry(DeleteKeycloakAdapter deleteKeycloakAdapter)
 	{
-		stringBuilder.append("/subsystem=keycloak:remove\n");
-		stringBuilder.append("/extension=org.keycloak.keycloak-adapter-subsystem/:remove\n");
 		stringBuilder.append("/subsystem=security/security-domain=keycloak/:remove\n");
+		footer.append("/extension=org.keycloak.keycloak-adapter-subsystem/:remove\n");
+		footer.append("/subsystem=keycloak:remove\n");
 	}
 }

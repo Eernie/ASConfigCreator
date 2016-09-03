@@ -153,7 +153,7 @@ public class DefaultWildflyParser extends DefaultJbossParser implements Configur
 		}
 
 		File file = new File(outputDirectoryPath, "wildfly.cli");
-		FileUtils.write(file, header.append(variablesBuilder).append('\n').append(fileContent));
+		FileUtils.write(file, header.append(variablesBuilder).append('\n').append(fileContent).append(footer));
 
 		try (FileWriter writer = new FileWriter(new File(outputDirectoryPath, "wildfly.properties")))
 		{
