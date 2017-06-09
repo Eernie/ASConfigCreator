@@ -503,10 +503,15 @@ public class DefaultJbossParser implements ConfigurationParser
 
 	private void handleEntry(AddKeycloakAdapter addKeycloakAdapter)
 	{
-		stringBuilder.append("/subsystem=security/security-domain=keycloak/:add\n");
-		stringBuilder.append("/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ \"code\" => \"org.keycloak.adapters.jboss.KeycloakLoginModule\",\"flag\" => \"required\"}])\n");
-		header.append("/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)\n");
-		header.append("/subsystem=keycloak:add\n");
+		header.append("if (outcome != success) of /subsystem=keycloak/:read-resource()\n");
+		header.append("\t/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)\n");
+		header.append("\t/subsystem=keycloak:add\n");
+		header.append("\t/subsystem=security/security-domain=keycloak/:add\n");
+		header.append("\t/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ \"code\" => \"org.keycloak.adapters.jboss.KeycloakLoginModule\",\"flag\" => \"required\"}])\n");
+		header.append("end-if\n");
+
+		//Make sure the batch isn't empty
+		stringBuilder.append("/:product-info\n");
 	}
 
 	private void handleEntry(DeleteKeycloakAdapter deleteKeycloakAdapter)

@@ -398,7 +398,13 @@ public class DefaultJbossParserTest
 		DefaultJbossParser parser = new DefaultJbossParser();
 		AddKeycloakAdapter baseEntry = new AddKeycloakAdapter();
 		parser.handle(baseEntry);
-		List<String> expected = Arrays.asList("/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)", "/subsystem=keycloak:add", "/subsystem=security/security-domain=keycloak/:add", "/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ \"code\" => \"org.keycloak.adapters.jboss.KeycloakLoginModule\",\"flag\" => \"required\"}])");
+		List<String> expected = Arrays.asList("if (outcome != success) of /subsystem=keycloak/:read-resource()",
+			"\t/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)",
+			"\t/subsystem=keycloak:add",
+			"\t/subsystem=security/security-domain=keycloak/:add",
+			"\t/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ \"code\" => \"org.keycloak.adapters.jboss.KeycloakLoginModule\",\"flag\" => \"required\"}])",
+			"end-if",
+			"/:product-info");
 		verifyOutput(parser, expected);
 	}
 

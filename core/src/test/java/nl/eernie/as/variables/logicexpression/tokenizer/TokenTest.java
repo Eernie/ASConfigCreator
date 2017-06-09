@@ -16,9 +16,6 @@ public class TokenTest
 	private static final Token TOKEN_2 = new Token("ABC");
 	private static final Token TOKEN_3 = new Token("ABC");
 
-	@SuppressWarnings("null")
-	private static final Token NULL_TOKEN = new Token(null);
-
 	@Test
 	public void testMethods()
 	{
@@ -120,18 +117,6 @@ public class TokenTest
 
 		assertEquals("HashCode does not produce the same number", hashCode, TOKEN_2.hashCode());
 		assertEquals("HashCode does not produce the same number", hashCode, TOKEN_3.hashCode());
-	}
-
-	@SuppressWarnings("null")
-	@Test
-	public void testEqualsAndHashCodeForNullToken()
-	{
-		assertTrue(NULL_TOKEN.equals(new Token(null)));
-		assertEquals(NULL_TOKEN.hashCode(), new Token(null).hashCode());
-		assertFalse(NULL_TOKEN.equals(new Token("Blah")));
-
-		assertNotEquals(NULL_TOKEN.hashCode(), TEST_LITERAL_TOKEN.hashCode());
-		assertFalse(NULL_TOKEN.equals(TEST_LITERAL_TOKEN));
 	}
 
 	@Test
