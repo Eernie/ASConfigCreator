@@ -13,7 +13,7 @@ mvn install
 ## Usage
 There are two ways to use the application, directly or trough the maven plugin.
 
-###Direct
+### Direct
 For the direct approach you'll have to setup some configuration:
 ```java
 Configuration configuration = new Configuration();
@@ -25,7 +25,7 @@ ASConfigCreator asConfigCreator = new ASConfigCreator(configuration);
 asConfigCreator.createConfigFiles(masterFile.getAbsolutePath());
 ```
 
-###Maven plugin
+### Maven plugin
 For the maven plugin you can use the following snippet:
 ```xml
 <plugin>
