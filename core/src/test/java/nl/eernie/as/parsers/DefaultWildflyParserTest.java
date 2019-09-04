@@ -158,7 +158,8 @@ public class DefaultWildflyParserTest
 	private void verifyOutput(DefaultWildflyParser parser, List<String> expected, Set<String> expectedProperties) throws IOException
 	{
 		Path tempDirectory = Files.createTempDirectory("junit");
-		parser.writeFileToDirectory(tempDirectory.toFile());
+		parser.getConfiguration().setOutputDirectoryPath(tempDirectory.toFile());
+		parser.writeFileToDirectory();
 		Path outputFile = Paths.get(tempDirectory.toString() + "/wildfly.cli");
 
 		List<String> outputContent = Files.readAllLines(outputFile, Charset.defaultCharset());

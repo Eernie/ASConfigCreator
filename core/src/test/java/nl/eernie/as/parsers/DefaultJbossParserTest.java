@@ -419,7 +419,8 @@ public class DefaultJbossParserTest
 		parser.initParser(new Configuration());
 
 		Path tempDirectory = Files.createTempDirectory("junit");
-		parser.writeFileToDirectory(tempDirectory.toFile());
+		parser.getConfiguration().setOutputDirectoryPath(tempDirectory.toFile());
+		parser.writeFileToDirectory();
 		Path outputFile = Paths.get(tempDirectory.toString() + "/jboss.cli");
 		List<String> fileContent = Files.readAllLines(outputFile, Charset.defaultCharset());
 
@@ -436,7 +437,8 @@ public class DefaultJbossParserTest
 	private void verifyOutput(DefaultJbossParser parser, List<String> expected) throws IOException
 	{
 		Path tempDirectory = Files.createTempDirectory("junit");
-		parser.writeFileToDirectory(tempDirectory.toFile());
+		parser.getConfiguration().setOutputDirectoryPath(tempDirectory.toFile());
+		parser.writeFileToDirectory();
 		Path outputFile = Paths.get(tempDirectory.toString() + "/jboss.cli");
 		List<String> fileContent = Files.readAllLines(outputFile, Charset.defaultCharset());
 

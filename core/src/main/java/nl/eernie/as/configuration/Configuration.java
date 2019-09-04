@@ -1,10 +1,8 @@
 package nl.eernie.as.configuration;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import nl.eernie.as.application_server.ApplicationServer;
 
@@ -15,6 +13,7 @@ public class Configuration
 	private String fromTag;
 	private String toTag;
 	private File outputDirectoryPath;
+	private String outputFilename;
 
 	public List<ApplicationServer> getApplicationServers()
 	{
@@ -56,15 +55,19 @@ public class Configuration
 		this.fromTag = fromTag;
 	}
 
+	public String getOutputFilename()
+	{
+		return outputFilename;
+	}
+
+	public void setOutputFilename(String outputFilename)
+	{
+		this.outputFilename = outputFilename;
+	}
+
 	@Override
 	public String toString()
 	{
-		return "Configuration{" +
-			"applicationServers=" + applicationServers +
-			", contexts=" + contexts +
-			", fromTag='" + fromTag + '\'' +
-			", toTag='" + toTag + '\'' +
-			", outputDirectoryPath=" + outputDirectoryPath +
-			'}';
+		return "Configuration{" + "applicationServers=" + applicationServers + ", contexts=" + contexts + ", fromTag='" + fromTag + '\'' + ", toTag='" + toTag + '\'' + ", outputDirectoryPath=" + outputDirectoryPath + ", outputFilename='" + outputFilename + '\'' + '}';
 	}
 }

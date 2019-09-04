@@ -28,7 +28,7 @@ import org.apache.commons.io.FileUtils;
 public class DefaultWildflyParser extends DefaultJbossParser implements ConfigurationParser
 {
 	private Set<Class<? extends BaseEntry>> parsableEntries = new HashSet<>(Arrays.asList(AddXADatasource.class, UpdateXADatasource.class, DeleteXADatasource.class));
-	private Configuration configuration;
+	private Configuration configuration = new Configuration();
 
 	@Override
 	public boolean canHandleChangeLogEntry(BaseEntry entry)
@@ -68,6 +68,18 @@ public class DefaultWildflyParser extends DefaultJbossParser implements Configur
 	public boolean canHandleApplicationServer(ApplicationServer applicationServer)
 	{
 		return applicationServer == ApplicationServer.WILDFLY;
+	}
+
+	@Override
+	public Configuration getConfiguration()
+	{
+		return configuration;
+	}
+
+	@Override
+	public void setConfiguration(Configuration configuration)
+	{
+		this.configuration = configuration;
 	}
 
 	@Override
@@ -138,7 +150,7 @@ public class DefaultWildflyParser extends DefaultJbossParser implements Configur
 	}
 
 	@Override
-	public void writeFileToDirectory(File outputDirectoryPath) throws IOException
+	public void writeFileToDirectory() throws IOException
 	{
 		StringBuilder variablesBuilder = new StringBuilder("\n");
 		Properties properties = new SortedProperties();
@@ -152,10 +164,10 @@ public class DefaultWildflyParser extends DefaultJbossParser implements Configur
 			variablesBuilder.append(String.format("set %s=${%s}\n", key, key));
 		}
 
-		File file = new File(outputDirectoryPath, "wildfly.cli");
+		File file = new File(configuration.getOutputDirectoryPath(), (configuration.getOutputFilename() != null ? configuration.getOutputFilename() : "wildfly") + ".cli");
 		FileUtils.write(file, header.append(variablesBuilder).append('\n').append(fileContent).append(footer));
 
-		try (FileWriter writer = new FileWriter(new File(outputDirectoryPath, "wildfly.properties")))
+		try (FileWriter writer = new FileWriter(new File(configuration.getOutputDirectoryPath(), (configuration.getOutputFilename() != null ? configuration.getOutputFilename() : "wildfly") + ".properties")))
 		{
 			properties.store(writer, "Generated Wildfly CLI properties");
 		}

@@ -49,7 +49,7 @@ public class ASConfigCreator
 		parseFile(changeLogFilePath);
 		for (ConfigurationParser configurationParser : configurationParsers.get(null))
 		{
-			configurationParser.writeFileToDirectory(configuration.getOutputDirectoryPath());
+			configurationParser.writeFileToDirectory();
 		}
 	}
 
@@ -101,11 +101,7 @@ public class ASConfigCreator
 
 	private void processChangeSet(ChangeSet changeSet)
 	{
-		if (!fromTagFound || endTagFound)
-		{
-			return;
-		}
-		else if (!configurationHasContext(changeSet.getContext()))
+		if (!fromTagFound || endTagFound || !configurationHasContext(changeSet.getContext()))
 		{
 			return;
 		}
@@ -205,7 +201,7 @@ public class ASConfigCreator
 	{
 		if (!configurationParsers.containsKey(applicationServer))
 		{
-			configurationParsers.put(applicationServer, new LinkedHashSet<ConfigurationParser>(1));
+			configurationParsers.put(applicationServer, new LinkedHashSet<>(1));
 		}
 		configurationParsers.get(applicationServer).add(configurationParser);
 	}
