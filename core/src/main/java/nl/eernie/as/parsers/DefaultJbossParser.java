@@ -59,6 +59,7 @@ public class DefaultJbossParser implements ConfigurationParser
 	protected StringBuilder header = new StringBuilder();
 	protected StringBuilder stringBuilder = new StringBuilder();
 	protected StringBuilder footer = new StringBuilder();
+	private Configuration configuration = new Configuration();
 
 	@Override
 	public boolean canHandleChangeLogEntry(BaseEntry entry)
@@ -194,15 +195,16 @@ public class DefaultJbossParser implements ConfigurationParser
 	}
 
 	@Override
-	public void writeFileToDirectory(File outputDirectoryPath) throws IOException
+	public void writeFileToDirectory() throws IOException
 	{
-		File file = new File(outputDirectoryPath, "jboss.cli");
+		File file = new File(configuration.getOutputDirectoryPath(), (configuration.getOutputFilename() != null ? configuration.getOutputFilename() : "jboss") + ".cli");
 		FileUtils.write(file, header.append(stringBuilder).append(footer));
 	}
 
 	@Override
 	public void initParser(Configuration configuration)
 	{
+		this.configuration = configuration;
 		stringBuilder = new StringBuilder();
 
 		String host;
@@ -225,6 +227,16 @@ public class DefaultJbossParser implements ConfigurationParser
 		header.append("## Generated with version: ").append(Version.getVersion()).append('\n');
 		header.append("## Configuration: ").append(configuration).append('\n');
 		header.append("## *********************************************************************\n\n");
+	}
+
+	public Configuration getConfiguration()
+	{
+		return configuration;
+	}
+
+	public void setConfiguration(Configuration configuration)
+	{
+		this.configuration = configuration;
 	}
 
 	protected void addProperty(Property entry)

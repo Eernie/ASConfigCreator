@@ -1,11 +1,10 @@
 package nl.eernie.as.parsers;
 
+import java.io.IOException;
+
 import nl.eernie.as.application_server.ApplicationServer;
 import nl.eernie.as.aschangelog.BaseEntry;
 import nl.eernie.as.configuration.Configuration;
-
-import java.io.File;
-import java.io.IOException;
 
 public interface ConfigurationParser
 {
@@ -19,7 +18,7 @@ public interface ConfigurationParser
 
 	void commitTransaction();
 
-	void writeFileToDirectory(File outputDirectoryPath) throws IOException;
+	void writeFileToDirectory() throws IOException;
 
 	void initParser(Configuration configuration);
 }

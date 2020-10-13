@@ -21,13 +21,13 @@ public class LogicalAndExpressionTest
 	@Test
 	public void testEvaluate()
 	{
-		assertFalse(FALSE_AND_FALSE.evaluate(Collections.<CharSequence> emptyList()));
-		assertFalse(FALSE_AND_TRUE.evaluate(Collections.<CharSequence> emptyList()));
-		assertFalse(TRUE_AND_FALSE.evaluate(Collections.<CharSequence> emptyList()));
-		assertTrue(TRUE_AND_TRUE.evaluate(Collections.<CharSequence> emptyList()));
+		assertFalse(FALSE_AND_FALSE.evaluate(Collections.emptyList()));
+		assertFalse(FALSE_AND_TRUE.evaluate(Collections.emptyList()));
+		assertFalse(TRUE_AND_FALSE.evaluate(Collections.emptyList()));
+		assertTrue(TRUE_AND_TRUE.evaluate(Collections.emptyList()));
 
-		assertFalse(new LogicalAndExpression(TRUE, TRUE, FALSE).evaluate(Collections.<CharSequence> emptyList()));
-		assertTrue(new LogicalAndExpression(TRUE, TRUE, TRUE).evaluate(Collections.<CharSequence> emptyList()));
+		assertFalse(new LogicalAndExpression(TRUE, TRUE, FALSE).evaluate(Collections.emptyList()));
+		assertTrue(new LogicalAndExpression(TRUE, TRUE, TRUE).evaluate(Collections.emptyList()));
 	}
 
 	@Test

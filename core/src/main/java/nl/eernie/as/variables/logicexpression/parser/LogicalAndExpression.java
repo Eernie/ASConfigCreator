@@ -22,11 +22,11 @@ class LogicalAndExpression extends LogicalExpression
 		boolean result = expressions[0].evaluate(contexts);
 		for (int i = 1; i < expressions.length; i++)
 		{
-			if (result == false)
+			if (!result)
 			{
 				return false;
 			}
-			result = result && expressions[i].evaluate(contexts);
+			result = expressions[i].evaluate(contexts);
 		}
 		return result;
 	}
